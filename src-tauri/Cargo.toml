@@ -1,0 +1,32 @@
+[package]
+name = "imesta-qr"
+version = "1.0.0"
+description = "Imesta QR Scanner - Modern Tauri Desktop App"
+authors = ["Imesta"]
+license = "MIT"
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "2.1.0", features = [] }
+
+[dependencies]
+tauri = { version = "2.1.0", features = [] }
+tauri-plugin-shell = { version = "2.1.0", features = [] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serialport = "4.5"
+tokio = { version = "1.0", features = ["full"] }
+lazy_static = "1.4"
+rdev = "0.4"
+tokio-sync = "0.1"
+
+[features]
+# This feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]
+
+
+

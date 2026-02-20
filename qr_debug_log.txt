@@ -1,0 +1,270 @@
+=== QR Debug Log - 1771586976 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771586976 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 32"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2NjY4LCJleHAiOjE3NzE1ODY5Njh9.8MLB0PTR5FoSUv3CNU1N-wQQ1vm-_xh4dEmBdzc3i-Y\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2NjY4LCJleHAiOjE3NzE1ODY5Njh9.8MLB0PTR5FoSUv3CNU1N-wQQ1vm-_xh4dEmBdzc3i-Y
+
+
+---
+
+=== QR Debug Log - 1771586976 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2NjY4LCJleHAiOjE3NzE1ODY5Njh9.8MLB0PTR5FoSUv3CNU1N-wQQ1vm-_xh4dEmBdzc3i-Y"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2NjY4LCJleHAiOjE3NzE1ODY5Njh9.8MLB0PTR5FoSUv3CNU1N-wQQ1vm-_xh4dEmBdzc3i-Y
+
+---
+
+=== QR Debug Log - 1771586986 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771586986 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 32"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTgyLCJleHAiOjE3NzE1ODcyODJ9.t7LyDkqJXmZdyxhpJsGyFGbXbXsExImpwArlMfwMDd8\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTgyLCJleHAiOjE3NzE1ODcyODJ9.t7LyDkqJXmZdyxhpJsGyFGbXbXsExImpwArlMfwMDd8
+
+
+---
+
+=== QR Debug Log - 1771586986 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTgyLCJleHAiOjE3NzE1ODcyODJ9.t7LyDkqJXmZdyxhpJsGyFGbXbXsExImpwArlMfwMDd8"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTgyLCJleHAiOjE3NzE1ODcyODJ9.t7LyDkqJXmZdyxhpJsGyFGbXbXsExImpwArlMfwMDd8
+
+---
+
+=== QR Debug Log - 1771587002 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587002 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 32"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTk1LCJleHAiOjE3NzE1ODcyOTV9.rIxyvM3K78ZMX349rF399sPqbPPai4098w7zebuwNOE\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTk1LCJleHAiOjE3NzE1ODcyOTV9.rIxyvM3K78ZMX349rF399sPqbPPai4098w7zebuwNOE
+
+
+---
+
+=== QR Debug Log - 1771587002 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTk1LCJleHAiOjE3NzE1ODcyOTV9.rIxyvM3K78ZMX349rF399sPqbPPai4098w7zebuwNOE"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg2OTk1LCJleHAiOjE3NzE1ODcyOTV9.rIxyvM3K78ZMX349rF399sPqbPPai4098w7zebuwNOE
+
+---
+
+=== QR Debug Log - 1771587016 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587016 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDExLCJleHAiOjE3NzE1ODczMTF9.sogRYGrHYSRPdObOdImc2tKSeN3kAjg6di7mZlTcKt4\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDExLCJleHAiOjE3NzE1ODczMTF9.sogRYGrHYSRPdObOdImc2tKSeN3kAjg6di7mZlTcKt4
+
+
+---
+
+=== QR Debug Log - 1771587016 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDExLCJleHAiOjE3NzE1ODczMTF9.sogRYGrHYSRPdObOdImc2tKSeN3kAjg6di7mZlTcKt4"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDExLCJleHAiOjE3NzE1ODczMTF9.sogRYGrHYSRPdObOdImc2tKSeN3kAjg6di7mZlTcKt4
+
+---
+
+=== QR Debug Log - 1771587024 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587024 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDIwLCJleHAiOjE3NzE1ODczMjB9.KZ7vZh_Ih9CscVmh2Q40A0QRuc-HQK3Jzob6CO7BWZc\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDIwLCJleHAiOjE3NzE1ODczMjB9.KZ7vZh_Ih9CscVmh2Q40A0QRuc-HQK3Jzob6CO7BWZc
+
+
+---
+
+=== QR Debug Log - 1771587024 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDIwLCJleHAiOjE3NzE1ODczMjB9.KZ7vZh_Ih9CscVmh2Q40A0QRuc-HQK3Jzob6CO7BWZc"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDIwLCJleHAiOjE3NzE1ODczMjB9.KZ7vZh_Ih9CscVmh2Q40A0QRuc-HQK3Jzob6CO7BWZc
+
+---
+
+=== QR Debug Log - 1771587029 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587029 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDI2LCJleHAiOjE3NzE1ODczMjZ9.vVKBQglymiMb9TUSqQVSmJ6TsAZ6ZRyu4qu-XrF-fnA\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDI2LCJleHAiOjE3NzE1ODczMjZ9.vVKBQglymiMb9TUSqQVSmJ6TsAZ6ZRyu4qu-XrF-fnA
+
+
+---
+
+=== QR Debug Log - 1771587029 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDI2LCJleHAiOjE3NzE1ODczMjZ9.vVKBQglymiMb9TUSqQVSmJ6TsAZ6ZRyu4qu-XrF-fnA"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDI2LCJleHAiOjE3NzE1ODczMjZ9.vVKBQglymiMb9TUSqQVSmJ6TsAZ6ZRyu4qu-XrF-fnA
+
+---
+
+=== QR Debug Log - 1771587035 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587035 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6c 65 6d 34 77 5a 32 67 77 4d 44 41 79 5a 33 42 32 59 6a 4d 31 4d 58 64 6f 4e 57 46 76 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDMzLCJleHAiOjE3NzE1ODczMzN9.ThpJLOyaytIQwz0iCvoRX45SbDyxzXD69OVqjSIq6N0\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDMzLCJleHAiOjE3NzE1ODczMzN9.ThpJLOyaytIQwz0iCvoRX45SbDyxzXD69OVqjSIq6N0
+
+
+---
+
+=== QR Debug Log - 1771587035 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDMzLCJleHAiOjE3NzE1ODczMzN9.ThpJLOyaytIQwz0iCvoRX45SbDyxzXD69OVqjSIq6N0"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxlem4wZ2gwMDAyZ3B2YjM1MXdoNWFvIiwiaWF0IjoxNzcxNTg3MDMzLCJleHAiOjE3NzE1ODczMzN9.ThpJLOyaytIQwz0iCvoRX45SbDyxzXD69OVqjSIq6N0
+
+---
+
+=== QR Debug Log - 1771587184 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587184 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6b 64 57 52 68 62 6d 45 77 4d 44 41 77 5a 33 41 78 59 58 45 33 62 54 64 76 5a 57 59 33 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MTgxLCJleHAiOjE3NzE1ODc0ODF9.hOv0_g4WoeNRV3HLoqXfUeLJc593pE82AniSav0ShZg\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MTgxLCJleHAiOjE3NzE1ODc0ODF9.hOv0_g4WoeNRV3HLoqXfUeLJc593pE82AniSav0ShZg
+
+
+---
+
+=== QR Debug Log - 1771587184 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MTgxLCJleHAiOjE3NzE1ODc0ODF9.hOv0_g4WoeNRV3HLoqXfUeLJc593pE82AniSav0ShZg"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MTgxLCJleHAiOjE3NzE1ODc0ODF9.hOv0_g4WoeNRV3HLoqXfUeLJc593pE82AniSav0ShZg
+
+---
+
+=== QR Debug Log - 1771587203 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587203 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6b 64 57 52 68 62 6d 45 77 4d 44 41 77 5a 33 41 78 59 58 45 33 62 54 64 76 5a 57 59 33 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjAwLCJleHAiOjE3NzE1ODc1MDB9.WsBHMOVsYWZqq0lJN1DHo36_woE3xljQ9GHavSVg0JA\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjAwLCJleHAiOjE3NzE1ODc1MDB9.WsBHMOVsYWZqq0lJN1DHo36_woE3xljQ9GHavSVg0JA
+
+
+---
+
+=== QR Debug Log - 1771587203 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjAwLCJleHAiOjE3NzE1ODc1MDB9.WsBHMOVsYWZqq0lJN1DHo36_woE3xljQ9GHavSVg0JA"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjAwLCJleHAiOjE3NzE1ODc1MDB9.WsBHMOVsYWZqq0lJN1DHo36_woE3xljQ9GHavSVg0JA
+
+---
+
+=== QR Debug Log - 1771587220 ===
+HAM VERİ (raw):
+  Length: 1 bytes
+  Hex (first 100 bytes): "65"
+  String (escaped): "e"
+  Visible: e
+
+---
+
+=== QR Debug Log - 1771587220 ===
+HAM VERİ (raw):
+  Length: 174 bytes
+  Hex (first 100 bytes): "79 4a 68 62 47 63 69 4f 69 4a 49 55 7a 49 31 4e 69 49 73 49 6e 52 35 63 43 49 36 49 6b 70 58 56 43 4a 39 2e 65 79 4a 7a 64 57 49 69 4f 69 4a 6a 62 57 78 6b 64 57 52 68 62 6d 45 77 4d 44 41 77 5a 33 41 78 59 58 45 33 62 54 64 76 5a 57 59 33 49 69 77 69 61 57 46 30 49 6a 6f 78 4e 7a 63 78 4e 54 67 33"
+  String (escaped): "yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjE1LCJleHAiOjE3NzE1ODc1MTV9.kV6Qz97kkPGyXQO3TQHdg5AqnJ_itYp7E0GoQvv80ds\r\n"
+  Visible: yJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjE1LCJleHAiOjE3NzE1ODc1MTV9.kV6Qz97kkPGyXQO3TQHdg5AqnJ_itYp7E0GoQvv80ds
+
+
+---
+
+=== QR Debug Log - 1771587220 ===
+TAM TOKEN (complete):
+  Length: 173 bytes
+  String (escaped): "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjE1LCJleHAiOjE3NzE1ODc1MTV9.kV6Qz97kkPGyXQO3TQHdg5AqnJ_itYp7E0GoQvv80ds"
+  Visible: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWxkdWRhbmEwMDAwZ3AxYXE3bTdvZWY3IiwiaWF0IjoxNzcxNTg3MjE1LCJleHAiOjE3NzE1ODc1MTV9.kV6Qz97kkPGyXQO3TQHdg5AqnJ_itYp7E0GoQvv80ds
+
+---
+
