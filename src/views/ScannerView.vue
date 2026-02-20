@@ -217,6 +217,12 @@ const pollQRCode = async () => {
   try {
     const qrCode = await tauriService.readQRCode();
     if (qrCode) {
+      // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+      try {
+        await tauriService.showWindow();
+      } catch (error) {
+        console.warn('Pencere açma hatası:', error);
+      }
       await qrStore.processQRToken(qrCode, logsStore);
     }
   } catch (error) {
@@ -249,9 +255,16 @@ onMounted(async () => {
   }
   
   // Tauri event listener - QR kod yakalandığında (keyboard hook'tan)
-  const unlisten = await listen<string>('qr-scanned', (event) => {
+  const unlisten = await listen<string>('qr-scanned', async (event) => {
     const qrCode = event.payload;
     if (qrCode) {
+      // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+      try {
+        await tauriService.showWindow();
+      } catch (error) {
+        console.warn('Pencere açma hatası:', error);
+      }
+      
       // QR kod değerini log'a yaz
       logsStore.addLog({
         type: 'info',
@@ -259,7 +272,7 @@ onMounted(async () => {
         timestamp: new Date().toISOString(),
         token: qrCode,
       });
-      qrStore.processQRToken(qrCode, logsStore);
+      await qrStore.processQRToken(qrCode, logsStore);
     }
   });
   

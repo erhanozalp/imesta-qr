@@ -2,7 +2,7 @@ use crate::keyboard::KeyboardHook;
 use crate::serial::SerialManager;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
-use tauri::Emitter;
+use tauri::{Emitter, Manager};
 use tokio::sync::{mpsc, Mutex};
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -149,5 +149,54 @@ pub async fn stop_keyboard_hook() -> Result<(), String> {
 pub async fn is_keyboard_hook_active() -> Result<bool, String> {
     let hook = KEYBOARD_HOOK.lock().await;
     Ok(hook.is_listening())
+}
+
+/// Pencereyi restore eder ve öne getirir (sadece minimize durumundaysa restore eder)
+/// Kasiyerler için: QR okutulduğunda pencereyi ekrana getirir
+#[tauri::command]
+pub async fn restore_and_focus_window(app: tauri::AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window("main") {
+        #[cfg(target_os = "windows")]
+        {
+            // Windows API kullanarak pencere durumunu kontrol et
+            use windows::Win32::Foundation::HWND;
+            use windows::Win32::UI::WindowsAndMessaging::{IsIconic, ShowWindow, SW_RESTORE, SW_SHOW};
+            
+            if let Ok(hwnd) = window.hwnd() {
+                let hwnd = HWND(hwnd.0);
+                unsafe {
+                    // Sadece minimize durumundaysa restore et
+                    if IsIconic(hwnd).as_bool() {
+                        // Minimize durumunda: Restore et
+                        ShowWindow(hwnd, SW_RESTORE);
+                        ShowWindow(hwnd, SW_SHOW);
+                    } else {
+                        // Normal durumda: Sadece göster (gizli ise) ve öne getir
+                        ShowWindow(hwnd, SW_SHOW);
+                    }
+                }
+            }
+        }
+        
+        // Pencereyi göster (gizli ise)
+        window.show().map_err(|e| format!("Pencere gösterilemedi: {}", e))?;
+        
+        // Pencereye odak ver (en öne getir)
+        window.set_focus().map_err(|e| format!("Pencere odaklanamadı: {}", e))?;
+        
+        // Geçici olarak always on top yap (kesinlikle öne getirmek için)
+        let _ = window.set_always_on_top(true);
+        
+        // 500ms sonra always on top'u kaldır
+        let window_clone = window.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(tokio::time::Duration::from_millis(500)).await;
+            let _ = window_clone.set_always_on_top(false);
+        });
+        
+        Ok(())
+    } else {
+        Err("Pencere bulunamadı".to_string())
+    }
 }
 

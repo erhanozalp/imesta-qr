@@ -21,6 +21,7 @@ fn main() {
             start_keyboard_hook,
             stop_keyboard_hook,
             is_keyboard_hook_active,
+            restore_and_focus_window,
         ])
         .setup(|app| {
             // Close event handler - minimize on close

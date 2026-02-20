@@ -138,17 +138,25 @@ export const tauriService = {
   },
 
   /**
-   * Pencereyi gösterir
+   * Pencereyi gösterir ve odaklar (minimize/gizli durumundan geri getirir)
+   * Kasiyerler için: QR okutulduğunda pencereyi ekrana getirir
+   * Rust tarafındaki restore_and_focus_window command'ını kullanır
    */
   async showWindow(): Promise<void> {
     try {
-      const { getCurrentWindow } = await import('@tauri-apps/api/window');
-      const appWindow = getCurrentWindow();
-      await appWindow.show();
-      await appWindow.setFocus();
+      // Rust tarafındaki command'ı kullan (Windows'ta minimize durumunu düzgün handle eder)
+      await invoke('restore_and_focus_window');
     } catch (error: any) {
       console.error('Pencere gösterme hatası:', error);
-      throw new Error(error.message || 'Pencere gösterme başarısız');
+      // Fallback: Frontend API'yi dene
+      try {
+        const { getCurrentWindow } = await import('@tauri-apps/api/window');
+        const appWindow = getCurrentWindow();
+        await appWindow.show();
+        await appWindow.setFocus();
+      } catch (fallbackError: any) {
+        throw new Error(error.message || 'Pencere gösterme başarısız');
+      }
     }
   },
 

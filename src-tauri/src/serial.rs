@@ -3,8 +3,6 @@ use std::sync::{Arc, Mutex};
 use std::time::Duration;
 use tokio::sync::mpsc;
 use tokio::task;
-use std::fs::OpenOptions;
-use std::io::Write;
 
 pub struct SerialManager {
     port: Arc<Mutex<Option<Box<dyn serialport::SerialPort + Send>>>>,
@@ -91,11 +89,6 @@ impl SerialManager {
                         let mut read_buffer = self.read_buffer.lock().unwrap();
                         read_buffer.push_str(&raw_data);
                         
-                        // Debug: Ham veriyi log'a kaydet
-                        if let Err(e) = log_qr_debug(&raw_data, "") {
-                            eprintln!("QR debug log yazma hatası: {}", e);
-                        }
-                        
                         // Yeni satır karakteri var mı kontrol et (\r\n veya \n)
                         if read_buffer.contains('\n') {
                             // Token tamamlandı, satırı ayır
@@ -110,10 +103,6 @@ impl SerialManager {
                             }
                             
                             if !complete_token.is_empty() {
-                                // Trim sonrası token'ı log'a kaydet
-                                if let Err(e) = log_qr_debug("", &complete_token) {
-                                    eprintln!("QR debug log yazma hatası: {}", e);
-                                }
                                 return Ok(Some(complete_token));
                             }
                         } else if read_buffer.contains('\r') {
@@ -128,10 +117,6 @@ impl SerialManager {
                             }
                             
                             if !complete_token.is_empty() {
-                                // Trim sonrası token'ı log'a kaydet
-                                if let Err(e) = log_qr_debug("", &complete_token) {
-                                    eprintln!("QR debug log yazma hatası: {}", e);
-                                }
                                 return Ok(Some(complete_token));
                             }
                         }
@@ -152,11 +137,6 @@ impl SerialManager {
                         if !token.is_empty() {
                             let trimmed_token = token.clone();
                             *self.read_buffer.lock().unwrap() = String::new();
-                            
-                            // Trim sonrası token'ı log'a kaydet
-                            if let Err(e) = log_qr_debug("", &trimmed_token) {
-                                eprintln!("QR debug log yazma hatası: {}", e);
-                            }
                             return Ok(Some(trimmed_token));
                         }
                     }
@@ -299,43 +279,4 @@ impl Default for SerialManager {
     }
 }
 
-/// QR kod debug log'u dosyaya yazar
-fn log_qr_debug(raw_data: &str, trimmed_data: &str) -> std::io::Result<()> {
-    // Log dosyasını proje root'una yaz (src-tauri dışına, watch mekanizması tetiklenmesin)
-    let log_path = "../qr_debug_log.txt";
-    let mut file = OpenOptions::new()
-        .create(true)
-        .append(true)
-        .open(log_path)?;
-    
-    use std::time::SystemTime;
-    let timestamp = SystemTime::now()
-        .duration_since(SystemTime::UNIX_EPOCH)
-        .unwrap()
-        .as_secs();
-    
-    writeln!(file, "=== QR Debug Log - {} ===", timestamp)?;
-    
-    if !raw_data.is_empty() {
-        writeln!(file, "HAM VERİ (raw):")?;
-        writeln!(file, "  Length: {} bytes", raw_data.len())?;
-        writeln!(file, "  Hex (first 100 bytes): {:?}", raw_data.as_bytes().iter().take(100).map(|b| format!("{:02x}", b)).collect::<Vec<_>>().join(" "))?;
-        writeln!(file, "  String (escaped): {:?}", raw_data)?;
-        writeln!(file, "  Visible: {}", raw_data)?;
-        writeln!(file, "")?;
-    }
-    
-    if !trimmed_data.is_empty() {
-        writeln!(file, "TAM TOKEN (complete):")?;
-        writeln!(file, "  Length: {} bytes", trimmed_data.len())?;
-        writeln!(file, "  String (escaped): {:?}", trimmed_data)?;
-        writeln!(file, "  Visible: {}", trimmed_data)?;
-        writeln!(file, "")?;
-    }
-    
-    writeln!(file, "---")?;
-    writeln!(file, "")?;
-    
-    Ok(())
-}
 

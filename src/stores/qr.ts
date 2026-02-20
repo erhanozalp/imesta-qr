@@ -97,6 +97,14 @@ export const useQRStore = defineStore('qr', () => {
       return;
     }
 
+    // Hybrid yaklaşım: Yeni QR okutulduğunda eski modal'ları kapat
+    // Müşteri modalı her zaman öncelikli, result modal'ı kapat
+    if (showResultModal.value) {
+      // Eski "puan verildi" modalını kapat
+      showResultModal.value = false;
+      actionResult.value = null;
+    }
+
     isProcessingQR.value = true;
     lastProcessedToken.value = token;
     lastProcessedTime.value = now;
@@ -168,8 +176,15 @@ export const useQRStore = defineStore('qr', () => {
   async function processAction(actionType: string, logsStore: any) {
     if (!currentToken.value) return;
 
+    // Müşteri modalını kapat (işlem yapılırken)
     showCustomerModal.value = false;
     isProcessingQR.value = true;
+    
+    // Eğer result modal açıksa kapat (yeni işlem yapılırken)
+    if (showResultModal.value) {
+      showResultModal.value = false;
+      actionResult.value = null;
+    }
 
     try {
       logsStore.addLog({
