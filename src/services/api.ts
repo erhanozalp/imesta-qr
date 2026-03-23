@@ -1,13 +1,12 @@
 import axios from 'axios';
+import { authService } from '@/services/auth';
 
 // API URL'ini dinamik olarak al
-const getApiBaseURL = (): string => {
-  // Environment variable'dan al
+export const getApiBaseURL = (): string => {
   const envUrl = import.meta.env.VITE_API_URL;
   if (envUrl) {
     return envUrl;
   }
-  // Default
   return 'http://localhost:3000';
 };
 
@@ -19,10 +18,57 @@ const apiClient = axios.create({
   },
 });
 
+/** 401'de refresh denemesi: sadece kasiyer JWT / guard kaynaklı mesajlar (müşteri QR hatası değil) */
+function shouldTryQrRefresh(message: unknown): boolean {
+  const m = String(message ?? '').trim();
+  if (!m) return true;
+  const lower = m.toLowerCase();
+  if (lower === 'unauthorized') return true;
+  if (lower.includes('jwt expired') || lower.includes('jsonwebtokenerror')) return true;
+  if (lower === 'unauthorized.' || m === 'Unauthorized') return true;
+  return false;
+}
+
+let refreshPromise: Promise<void> | null = null;
+
+async function refreshQrSession(): Promise<void> {
+  if (refreshPromise) {
+    await refreshPromise;
+    return;
+  }
+  const refresh = authService.getRefreshToken();
+  if (!refresh) {
+    throw new Error('no refresh token');
+  }
+  refreshPromise = (async () => {
+    const { data } = await axios.post<{
+      access_token: string;
+      refresh_token: string;
+    }>(
+      `${getApiBaseURL()}/auth/qr/refresh`,
+      { refresh_token: refresh },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+        },
+      },
+    );
+    authService.setToken(data.access_token);
+    authService.setRefreshToken(data.refresh_token);
+    window.dispatchEvent(new Event('auth:token-updated'));
+  })();
+  try {
+    await refreshPromise;
+  } finally {
+    refreshPromise = null;
+  }
+}
+
 // Request interceptor - Token ekle
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('admin_token');
+    const token = authService.getToken();
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;
@@ -32,44 +78,97 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor - 401 hatası durumunda logout
+// Response interceptor - 401: önce QR refresh, sonra mevcut mantık
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      // Sadece authentication endpoint'lerinde 401 hatası gelirse logout yap
-      // QR token hataları (/transactions/*) için logout yapma
-      const url = error.config?.url || '';
-      const isAuthEndpoint = url.includes('/auth/');
-      const isTransactionEndpoint = url.includes('/transactions/');
+  async (error) => {
+    const status = error.response?.status;
+    const config = error.config as { url?: string; _retryAfterRefresh?: boolean; headers?: Record<string, string> } | undefined;
+    if (status !== 401 || !config) {
+      return Promise.reject(error);
+    }
 
-      if (isAuthEndpoint && !isTransactionEndpoint) {
-        // Authentication hatası - logout yap
-        console.log('🔒 Authentication hatası, logout yapılıyor');
-        localStorage.removeItem('admin_token');
-        // Event gönder (App.vue dinleyecek)
+    const url = config.url || '';
+
+    if (url.includes('/auth/qr/login') || url.includes('/auth/login')) {
+      return Promise.reject(error);
+    }
+
+    if (url.includes('/auth/qr/refresh')) {
+      authService.clearAllAuth();
+      window.dispatchEvent(new Event('auth:logout'));
+      return Promise.reject(error);
+    }
+
+    const msg = error.response?.data?.message;
+    const canRefresh =
+      shouldTryQrRefresh(msg) &&
+      !!authService.getRefreshToken() &&
+      !config._retryAfterRefresh;
+
+    if (canRefresh) {
+      try {
+        await refreshQrSession();
+        config._retryAfterRefresh = true;
+        config.headers = config.headers ?? {};
+        config.headers.Authorization = `Bearer ${authService.getToken()}`;
+        return apiClient.request(config);
+      } catch {
+        authService.clearAllAuth();
         window.dispatchEvent(new Event('auth:logout'));
-      } else if (isTransactionEndpoint) {
-        // QR token hatası - logout yapma, sadece hata döndür
-        console.log('⚠️ QR token hatası (401), logout yapılmıyor');
-      } else {
-        // Diğer endpoint'lerde 401 hatası - logout yap
-        console.log('🔒 Genel 401 hatası, logout yapılıyor');
-        localStorage.removeItem('admin_token');
-        window.dispatchEvent(new Event('auth:logout'));
+        return Promise.reject(error);
       }
     }
+
+    const isAuthEndpoint = url.includes('/auth/');
+    const isTransactionEndpoint = url.includes('/transactions/');
+
+    if (isAuthEndpoint && !isTransactionEndpoint) {
+      console.log('🔒 Authentication hatası, logout yapılıyor');
+      authService.clearAllAuth();
+      window.dispatchEvent(new Event('auth:logout'));
+    } else if (isTransactionEndpoint) {
+      console.log('⚠️ İşlem 401 (müşteri QR veya kasiyer oturumu)');
+    } else {
+      console.log('🔒 Genel 401 hatası, logout yapılıyor');
+      authService.clearAllAuth();
+      window.dispatchEvent(new Event('auth:logout'));
+    }
+
     return Promise.reject(error);
   }
 );
 
 export const apiService = {
-  async login(email: string, password: string) {
-    const response = await apiClient.post<{ access_token: string }>('/auth/login', {
+  /** QR masaüstü: access + refresh token */
+  async loginQr(email: string, password: string) {
+    const response = await apiClient.post<{
+      access_token: string;
+      refresh_token: string;
+    }>('/auth/qr/login', {
       email,
       password,
     });
     return response.data;
+  },
+
+  async logoutQr() {
+    const refresh = authService.getRefreshToken();
+    if (!refresh) return;
+    try {
+      await axios.post(
+        `${getApiBaseURL()}/auth/qr/logout`,
+        { refresh_token: refresh },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'ngrok-skip-browser-warning': 'true',
+          },
+        }
+      );
+    } catch {
+      /* sunucu ulaşılamazsa yine de istemci temizlenir */
+    }
   },
 
   async getMe() {
@@ -114,14 +213,13 @@ export const apiService = {
   },
 
   async getCustomerPreview(token: string) {
-    // Debug: API'ye gönderilen token'ı console'a yaz
     console.log('📤 API Request - getCustomerPreview:', {
       token: token,
       length: token.length,
-      hex: Array.from(token).map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' '),
+      hex: Array.from(token).map((c) => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' '),
       url: `${getApiBaseURL()}/transactions/customer-preview?token=${encodeURIComponent(token)}`,
     });
-    
+
     const response = await apiClient.get<{
       customer: {
         id: string;
@@ -190,5 +288,3 @@ export const apiService = {
     return response.data;
   },
 };
-
-

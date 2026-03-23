@@ -21,13 +21,13 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true;
     error.value = null;
     const notifications = useNotificationsStore();
-    
+
     try {
-      const response = await apiService.login(email, password);
+      const response = await apiService.loginQr(email, password);
       authService.setToken(response.access_token);
+      authService.setRefreshToken(response.refresh_token);
       token.value = response.access_token;
 
-      // Kullanıcı bilgilerini çek
       try {
         const me = await apiService.getMe();
         user.value = {
@@ -53,28 +53,39 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = info;
   }
 
-  function logout() {
-    const notifications = useNotificationsStore();
-    authService.clearToken();
+  function clearLocalSession() {
+    authService.clearAllAuth();
     token.value = null;
     user.value = null;
     error.value = null;
+  }
+
+  /** Sunucuya revoke gitmeden (401 / refresh başarısız) oturumu temizle */
+  function sessionExpired() {
+    clearLocalSession();
+  }
+
+  async function logout() {
+    const notifications = useNotificationsStore();
+    await apiService.logoutQr();
+    clearLocalSession();
     notifications.info('Çıkış yapıldı');
   }
 
+  function syncTokenFromStorage() {
+    token.value = authService.getToken();
+  }
+
   return {
-    // state
     token,
     user,
     loading,
     error,
-    // getters
     isAuthenticated,
-    // actions
     login,
     logout,
+    sessionExpired,
     setUser,
+    syncTokenFromStorage,
   };
 });
-
-

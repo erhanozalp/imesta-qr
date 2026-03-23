@@ -61,7 +61,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, onUnmounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import LoginView from '@/views/LoginView.vue';
 import ScannerView from '@/views/ScannerView.vue';
@@ -91,9 +91,18 @@ const { startMinimized } = storeToRefs(settingsStore);
 
 const userName = computed(() => user.value?.name ?? 'Kasiyer');
 
-const logout = () => {
-  auth.logout();
+const logout = async () => {
+  await auth.logout();
   qrStore.reset();
+};
+
+const onAuthLogout = () => {
+  auth.sessionExpired();
+  qrStore.reset();
+};
+
+const onTokenUpdated = () => {
+  auth.syncTokenFromStorage();
 };
 
 const closeCustomerModal = () => {
@@ -110,6 +119,9 @@ const handleActionSelect = (action: any) => {
 
 // Uygulama başlangıcında ayarları uygula
 onMounted(async () => {
+  window.addEventListener('auth:logout', onAuthLogout);
+  window.addEventListener('auth:token-updated', onTokenUpdated);
+
   // Eğer startMinimized ayarı aktifse, pencereyi başlangıçta gizle
   if (startMinimized.value) {
     try {
@@ -118,6 +130,11 @@ onMounted(async () => {
       console.warn('Pencere gizleme hatası:', error);
     }
   }
+});
+
+onUnmounted(() => {
+  window.removeEventListener('auth:logout', onAuthLogout);
+  window.removeEventListener('auth:token-updated', onTokenUpdated);
 });
 </script>
 

@@ -118,7 +118,16 @@ const isScanning = ref(false);
 const showSettings = ref(false);
 
 // Port durumunu periyodik olarak kontrol et
-let statusCheckInterval: number | null = null;
+let statusLoopTimeout: number | null = null;
+let qrLoopTimeout: number | null = null;
+let stopStatusLoop = false;
+let stopQrLoop = false;
+let isPortChecking = false;
+let isQrPolling = false;
+let isProcessingQR = false;
+
+const PORT_STATUS_MS = 2000;
+const QR_POLL_MS = 100;
 
 const clearLogs = () => {
   logsStore.clearLogs();
@@ -217,30 +226,70 @@ const pollQRCode = async () => {
   try {
     const qrCode = await tauriService.readQRCode();
     if (qrCode) {
-      // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+      if (isProcessingQR) return;
+      isProcessingQR = true;
       try {
-        await tauriService.showWindow();
-      } catch (error) {
-        console.warn('Pencere açma hatası:', error);
+        // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+        try {
+          await tauriService.showWindow();
+        } catch (error) {
+          console.warn('Pencere açma hatası:', error);
+        }
+        await qrStore.processQRToken(qrCode, logsStore);
+      } finally {
+        isProcessingQR = false;
       }
-      await qrStore.processQRToken(qrCode, logsStore);
     }
   } catch (error) {
     // Hata sessizce yok sayılır (port bağlı değilse normal)
   }
 };
 
-let qrPollInterval: number | null = null;
-
 onMounted(async () => {
   // İlk port durumu kontrolü
   await checkPortStatus();
   
-  // Periyodik port durumu kontrolü (her 2 saniyede bir)
-  statusCheckInterval = window.setInterval(checkPortStatus, 2000);
-  
-  // QR kod okuma polling (her 100ms'de bir)
-  qrPollInterval = window.setInterval(pollQRCode, 100);
+  // Periyodik port durumu kontrolü (single-flight)
+  const statusLoop = async () => {
+    if (stopStatusLoop) return;
+    if (isPortChecking) {
+      if (!stopStatusLoop) {
+        statusLoopTimeout = window.setTimeout(statusLoop, PORT_STATUS_MS);
+      }
+      return;
+    }
+    isPortChecking = true;
+    try {
+      await checkPortStatus();
+    } finally {
+      isPortChecking = false;
+      if (!stopStatusLoop) {
+        statusLoopTimeout = window.setTimeout(statusLoop, PORT_STATUS_MS);
+      }
+    }
+  };
+  statusLoopTimeout = window.setTimeout(statusLoop, PORT_STATUS_MS);
+
+  // QR kod okuma polling (single-flight)
+  const qrLoop = async () => {
+    if (stopQrLoop) return;
+    if (isQrPolling) {
+      if (!stopQrLoop) {
+        qrLoopTimeout = window.setTimeout(qrLoop, QR_POLL_MS);
+      }
+      return;
+    }
+    isQrPolling = true;
+    try {
+      await pollQRCode();
+    } finally {
+      isQrPolling = false;
+      if (!stopQrLoop) {
+        qrLoopTimeout = window.setTimeout(qrLoop, QR_POLL_MS);
+      }
+    }
+  };
+  qrLoopTimeout = window.setTimeout(qrLoop, QR_POLL_MS);
   
   // Keyboard hook'u başlat (QR cihazları klavye gibi davranabilir)
   try {
@@ -258,21 +307,27 @@ onMounted(async () => {
   const unlisten = await listen<string>('qr-scanned', async (event) => {
     const qrCode = event.payload;
     if (qrCode) {
-      // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+      if (isProcessingQR) return;
+      isProcessingQR = true;
       try {
-        await tauriService.showWindow();
-      } catch (error) {
-        console.warn('Pencere açma hatası:', error);
+        // QR okutulduğunda pencereyi aç ve odakla (kasiyerler için)
+        try {
+          await tauriService.showWindow();
+        } catch (error) {
+          console.warn('Pencere açma hatası:', error);
+        }
+        
+        // QR kod değerini log'a yaz
+        logsStore.addLog({
+          type: 'info',
+          message: `QR kod yakalandı (keyboard): ${qrCode}`,
+          timestamp: new Date().toISOString(),
+          token: qrCode,
+        });
+        await qrStore.processQRToken(qrCode, logsStore);
+      } finally {
+        isProcessingQR = false;
       }
-      
-      // QR kod değerini log'a yaz
-      logsStore.addLog({
-        type: 'info',
-        message: `QR kod yakalandı (keyboard): ${qrCode}`,
-        timestamp: new Date().toISOString(),
-        token: qrCode,
-      });
-      await qrStore.processQRToken(qrCode, logsStore);
     }
   });
   
@@ -283,12 +338,10 @@ onMounted(async () => {
 });
 
 onUnmounted(async () => {
-  if (statusCheckInterval) {
-    clearInterval(statusCheckInterval);
-  }
-  if (qrPollInterval) {
-    clearInterval(qrPollInterval);
-  }
+  stopStatusLoop = true;
+  stopQrLoop = true;
+  if (statusLoopTimeout) window.clearTimeout(statusLoopTimeout);
+  if (qrLoopTimeout) window.clearTimeout(qrLoopTimeout);
   
   // Keyboard hook'u durdur
   try {
