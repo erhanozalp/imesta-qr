@@ -264,7 +264,7 @@ export const apiService = {
     return response.data;
   },
 
-  async processAction(customerToken: string, action: string) {
+  async processAction(customerToken: string, action: string, quantity = 1) {
     const response = await apiClient.post<{
       success: boolean;
       message: string;
@@ -284,6 +284,7 @@ export const apiService = {
     }>('/transactions/process-action', {
       customerToken,
       action,
+      quantity,
     });
     return response.data;
   },

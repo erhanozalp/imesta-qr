@@ -173,7 +173,7 @@ export const useQRStore = defineStore('qr', () => {
     }
   }
 
-  async function processAction(actionType: string, logsStore: any) {
+  async function processAction(actionType: string, quantity: number, logsStore: any) {
     if (!currentToken.value) return;
 
     // Müşteri modalını kapat (işlem yapılırken)
@@ -194,19 +194,22 @@ export const useQRStore = defineStore('qr', () => {
         token: currentToken.value.substring(0, 50) + '...',
       });
 
-      const result = await apiService.processAction(currentToken.value, actionType);
+      const result = await apiService.processAction(currentToken.value, actionType, quantity);
       actionResult.value = result;
       showResultModal.value = true;
 
       const notifications = useNotificationsStore();
       const actionLabel = customerPreview.value?.availableActions.find(a => a.type === actionType)?.label || actionType;
+      const quantityLabel = quantity > 1 ? ` (${quantity} adet)` : '';
 
       // Log ekle
       const logType = result.success ? 'success' : 'error';
       
       logsStore.addLog({
         type: logType,
-        message: result.success ? `${actionLabel} başarılı` : `${actionLabel} başarısız`,
+        message: result.success
+          ? `${actionLabel}${quantityLabel} başarılı`
+          : `${actionLabel}${quantityLabel} başarısız`,
         timestamp: new Date().toISOString(),
         customerName: result.customerName,
         details: result.message,

@@ -91,24 +91,69 @@
           <div class="mt-4 space-y-2">
             <p class="text-xs font-medium text-slate-300">Ne yapmak istersiniz?</p>
             <div class="space-y-2">
-              <button
+              <div
                 v-for="action in data.availableActions"
                 :key="action.type"
-                type="button"
-                class="flex w-full items-center gap-3 rounded-xl border px-3.5 py-2.5 text-left text-xs transition"
+                class="space-y-2 rounded-xl border px-3.5 py-2.5"
                 :class="actionClasses(action)"
-                @click="emit('selectAction', action)"
               >
-                <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900/80 text-base">
-                  {{ action.icon }}
+                <button
+                  type="button"
+                  class="flex w-full items-center gap-3 text-left text-xs transition"
+                  @click="emitAction(action)"
+                >
+                  <div class="flex h-8 w-8 items-center justify-center rounded-xl bg-slate-900/80 text-base">
+                    {{ action.icon }}
+                  </div>
+                  <div class="flex-1 space-y-0.5">
+                    <p class="font-semibold text-slate-50">{{ action.label }}</p>
+                    <p class="text-[11px] text-slate-400">
+                      {{ action.description }}
+                    </p>
+                  </div>
+                </button>
+
+                <div
+                  v-if="supportsQuantity(action)"
+                  class="flex items-center justify-between rounded-lg bg-slate-900/70 px-2.5 py-2"
+                >
+                  <p class="text-[11px] text-slate-300">Adet</p>
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      class="h-7 w-7 rounded border border-slate-700 text-slate-200 hover:border-slate-500 disabled:opacity-50"
+                      :disabled="getQuantity(action) <= 1"
+                      @click.stop="decreaseQuantity(action)"
+                    >
+                      -
+                    </button>
+                    <input
+                      type="number"
+                      class="w-16 rounded border border-slate-700 bg-slate-900 px-2 py-1 text-center text-xs text-slate-100"
+                      :min="1"
+                      :max="getMaxQuantity(action)"
+                      :value="getQuantity(action)"
+                      @click.stop
+                      @input="onQuantityInput(action, $event)"
+                    />
+                    <button
+                      type="button"
+                      class="h-7 w-7 rounded border border-slate-700 text-slate-200 hover:border-slate-500 disabled:opacity-50"
+                      :disabled="getQuantity(action) >= getMaxQuantity(action)"
+                      @click.stop="increaseQuantity(action)"
+                    >
+                      +
+                    </button>
+                    <button
+                      type="button"
+                      class="rounded border border-emerald-500/60 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-medium text-emerald-200 hover:border-emerald-400"
+                      @click.stop="emitAction(action)"
+                    >
+                      Uygula
+                    </button>
+                  </div>
                 </div>
-                <div class="flex-1 space-y-0.5">
-                  <p class="font-semibold text-slate-50">{{ action.label }}</p>
-                  <p class="text-[11px] text-slate-400">
-                    {{ action.description }}
-                  </p>
-                </div>
-              </button>
+              </div>
             </div>
           </div>
         </div>
@@ -122,7 +167,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 interface Benefit {
   id: string;
@@ -181,11 +226,67 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'close'): void;
-  (e: 'selectAction', action: AvailableAction): void;
+  (e: 'selectAction', payload: { action: AvailableAction; quantity: number }): void;
 }>();
 
 const loading = computed(() => props.loading ?? false);
 const data = computed(() => props.data);
+const quantities = ref<Record<string, number>>({});
+
+watch(
+  () => props.visible,
+  (visible) => {
+    if (visible) {
+      // Her yeni müşteri/işlem açılışında yanlış adet riskini önlemek için varsayılanları sıfırla.
+      quantities.value = {};
+    }
+  },
+);
+
+const supportsQuantity = (action: AvailableAction) => {
+  return !!action.pointsGain || !!action.pointsCost;
+};
+
+const getMaxQuantity = (action: AvailableAction) => {
+  if (!supportsQuantity(action)) return 1;
+  if (action.pointsCost && data.value) {
+    const affordable = Math.floor(data.value.customer.points / action.pointsCost);
+    return Math.max(1, Math.min(50, affordable));
+  }
+  return 50;
+};
+
+const getQuantity = (action: AvailableAction) => {
+  const current = quantities.value[action.type] ?? 1;
+  const max = getMaxQuantity(action);
+  return Math.min(Math.max(current, 1), max);
+};
+
+const setQuantity = (action: AvailableAction, next: number) => {
+  const max = getMaxQuantity(action);
+  quantities.value[action.type] = Math.min(Math.max(next, 1), max);
+};
+
+const increaseQuantity = (action: AvailableAction) => {
+  setQuantity(action, getQuantity(action) + 1);
+};
+
+const decreaseQuantity = (action: AvailableAction) => {
+  setQuantity(action, getQuantity(action) - 1);
+};
+
+const onQuantityInput = (action: AvailableAction, event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const parsed = Number(target.value);
+  setQuantity(action, Number.isFinite(parsed) ? parsed : 1);
+};
+
+const emitAction = (action: AvailableAction) => {
+  emit('selectAction', {
+    action,
+    quantity: supportsQuantity(action) ? getQuantity(action) : 1,
+  });
+};
 
 const actionClasses = (action: AvailableAction) => {
   if (action.isRecommended) {

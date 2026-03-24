@@ -113,8 +113,8 @@ const closeResultModal = () => {
   qrStore.closeResultModal();
 };
 
-const handleActionSelect = (action: any) => {
-  qrStore.processAction(action.type, logsStore);
+const handleActionSelect = (payload: { action: { type: string }; quantity: number }) => {
+  qrStore.processAction(payload.action.type, payload.quantity, logsStore);
 };
 
 // Uygulama başlangıcında ayarları uygula
