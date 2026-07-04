@@ -34,11 +34,12 @@ export const tauriService = {
   },
 
   /**
-   * Port taraması yapar ve otomatik bağlanır
+   * Port taraması yapar ve otomatik bağlanır.
+   * baud verilmezse Rust tarafı varsayılanı (9600) kullanır.
    */
-  async scanForPort(): Promise<ScanResult> {
+  async scanForPort(baud?: number): Promise<ScanResult> {
     try {
-      return await invoke<ScanResult>('scan_for_port');
+      return await invoke<ScanResult>('scan_for_port', { baud: baud ?? null });
     } catch (error: any) {
       console.error('Port taraması başarısız:', error);
       return {
@@ -51,9 +52,11 @@ export const tauriService = {
   /**
    * Belirli bir porta bağlanır
    */
-  async connectPort(portName: string): Promise<void> {
+  async connectPort(portName: string, baud?: number): Promise<void> {
     try {
-      await invoke('connect_port', { port_name: portName });
+      // Hem snake_case hem camelCase gönderilir: Tauri v2 varsayılanı camelCase bekler,
+      // fazladan anahtar yok sayılır — iki sürümle de uyumlu.
+      await invoke('connect_port', { port_name: portName, portName, baud: baud ?? null });
     } catch (error: any) {
       console.error('Port bağlantısı başarısız:', error);
       throw new Error(error.message || 'Port bağlantısı başarısız');

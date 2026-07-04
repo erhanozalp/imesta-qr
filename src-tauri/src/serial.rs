@@ -1,14 +1,22 @@
 use serialport::{SerialPortType, SerialPortInfo};
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use std::time::{Duration, Instant};
 use tokio::sync::mpsc;
 use tokio::task;
+
+/// Varsayılan baud (geriye uyumlu). Ayarlardan 115200'e kadar yükseltilebilir.
+pub const DEFAULT_BAUD: u32 = 9600;
+/// Satır sonu göndermeyen okuyucular için: son byte'tan bu kadar süre sessizlik
+/// geçerse buffer'daki veri tamamlanmış token sayılır. 9600 baud'da JWT chunk'ları
+/// arası boşluk <10ms olduğundan 200ms sessizlik = iletim bitti demektir.
+const FLUSH_SILENCE_MS: u64 = 200;
 
 pub struct SerialManager {
     port: Arc<Mutex<Option<Box<dyn serialport::SerialPort + Send>>>>,
     port_name: Arc<Mutex<String>>,
     listener_tx: Arc<Mutex<Option<mpsc::UnboundedSender<String>>>>,
     read_buffer: Arc<Mutex<String>>, // QR kod parçalarını biriktirmek için
+    last_rx_at: Arc<Mutex<Option<Instant>>>, // Son byte'ın geldiği an (sessizlik eşiği için)
 }
 
 impl SerialManager {
@@ -18,6 +26,7 @@ impl SerialManager {
             port_name: Arc::new(Mutex::new(String::new())),
             listener_tx: Arc::new(Mutex::new(None)),
             read_buffer: Arc::new(Mutex::new(String::new())),
+            last_rx_at: Arc::new(Mutex::new(None)),
         }
     }
 
@@ -33,11 +42,11 @@ impl SerialManager {
     }
 
     /// Belirli bir porta bağlanır
-    pub fn connect(&self, port_name: &str) -> Result<(), String> {
+    pub fn connect(&self, port_name: &str, baud: u32) -> Result<(), String> {
         // Önce mevcut bağlantıyı kapat
         self.disconnect();
 
-        let builder = serialport::new(port_name, 9600)
+        let builder = serialport::new(port_name, baud)
             .timeout(Duration::from_millis(100))
             .data_bits(serialport::DataBits::Eight)
             .flow_control(serialport::FlowControl::None)
@@ -60,6 +69,7 @@ impl SerialManager {
         *self.port_name.lock().unwrap() = String::new();
         *self.listener_tx.lock().unwrap() = None;
         *self.read_buffer.lock().unwrap() = String::new(); // Buffer'ı temizle
+        *self.last_rx_at.lock().unwrap() = None;
     }
 
     /// Port durumunu kontrol eder
@@ -84,7 +94,10 @@ impl SerialManager {
                     if bytes_read > 0 {
                         // Ham veriyi al
                         let raw_data = String::from_utf8_lossy(&buffer[..bytes_read]);
-                        
+
+                        // Sessizlik eşiği için son veri zamanını güncelle
+                        *self.last_rx_at.lock().unwrap() = Some(Instant::now());
+
                         // Buffer'a ekle
                         let mut read_buffer = self.read_buffer.lock().unwrap();
                         read_buffer.push_str(&raw_data);
@@ -128,16 +141,35 @@ impl SerialManager {
                     }
                 }
                 Err(ref e) if e.kind() == std::io::ErrorKind::TimedOut => {
-                    // Timeout normal, veri yok demektir
-                    // Ancak buffer'da veri varsa ve belirli bir süre geçtiyse, token'ı gönder
-                    let read_buffer = self.read_buffer.lock().unwrap();
-                    if !read_buffer.is_empty() && read_buffer.len() > 10 {
-                        // Buffer'da veri var ve yeterince uzun, token'ı gönder
-                        let token = read_buffer.trim().to_string();
+                    // Timeout: yeni veri gelmedi. Buffer'da bekleyen veri varsa ve okuyucu
+                    // göndermeyi BİTİRDİYSE (son byte'tan beri FLUSH_SILENCE_MS sessizlik)
+                    // token'ı tamamlanmış say ve gönder (satır sonu göndermeyen okuyucular için).
+                    //
+                    // NOT: Önceki kod burada iki hataya sahipti ve "okut-bekle-yeniden okut"
+                    // şikayetinin kök nedeniydi:
+                    //  1) Aynı mutex'i guard canlıyken ikinci kez kilitleyip SELF-DEADLOCK
+                    //     yaratıyordu (tüm seri okuma, uygulama yeniden başlatılana dek donuyordu).
+                    //  2) "buffer > 10 karakter" koşuluyla JWT daha tamamlanmadan yarım
+                    //     gönderiyordu ("Geçersiz QR kod" hatalarının kaynağı).
+                    let silence_elapsed = {
+                        let last_rx = self.last_rx_at.lock().unwrap();
+                        match *last_rx {
+                            Some(t) => t.elapsed() >= Duration::from_millis(FLUSH_SILENCE_MS),
+                            None => false,
+                        }
+                    };
+
+                    if silence_elapsed {
+                        let token = {
+                            let mut read_buffer = self.read_buffer.lock().unwrap();
+                            let t = read_buffer.trim().to_string();
+                            read_buffer.clear();
+                            t
+                        };
+                        *self.last_rx_at.lock().unwrap() = None;
+
                         if !token.is_empty() {
-                            let trimmed_token = token.clone();
-                            *self.read_buffer.lock().unwrap() = String::new();
-                            return Ok(Some(trimmed_token));
+                            return Ok(Some(token));
                         }
                     }
                     Ok(None)
@@ -233,9 +265,9 @@ impl SerialManager {
     }
 
     /// Port taraması yapar ve uygun portu bulmaya çalışır
-    pub fn scan_for_port(&self) -> Result<String, String> {
+    pub fn scan_for_port(&self, baud: u32) -> Result<String, String> {
         let ports = Self::list_ports();
-        
+
         if ports.is_empty() {
             return Err("Hiç port bulunamadı".to_string());
         }
@@ -244,7 +276,7 @@ impl SerialManager {
         for port_info in &ports {
             if let SerialPortType::UsbPort(_) = &port_info.port_type {
                 // USB port bulundu, bağlanmayı dene
-                match self.connect(&port_info.port_name) {
+                match self.connect(&port_info.port_name, baud) {
                     Ok(_) => return Ok(port_info.port_name.clone()),
                     Err(_) => continue,
                 }
@@ -254,7 +286,7 @@ impl SerialManager {
         // USB port bulunamazsa, ilk COM portunu dene
         for port_info in &ports {
             if port_info.port_name.starts_with("COM") {
-                match self.connect(&port_info.port_name) {
+                match self.connect(&port_info.port_name, baud) {
                     Ok(_) => return Ok(port_info.port_name.clone()),
                     Err(_) => continue,
                 }
@@ -263,7 +295,7 @@ impl SerialManager {
 
         // Hiçbiri çalışmazsa ilk portu dene
         if let Some(first_port) = ports.first() {
-            match self.connect(&first_port.port_name) {
+            match self.connect(&first_port.port_name, baud) {
                 Ok(_) => Ok(first_port.port_name.clone()),
                 Err(e) => Err(e),
             }

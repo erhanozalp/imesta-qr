@@ -35,12 +35,28 @@ interface CustomerPreview {
   }>;
   summary: {
     canRedeemReward: boolean;
+    pointsForReward?: number; // yeni backend'de gelir (3/5 ilerleme için)
     freeCoffeesAvailable: number;
     hasStudentDiscount: boolean;
     hasPartnerDiscount: boolean;
     studentDiscountPercent: number;
     partnerDiscountPercent: number;
   };
+  // Yeni backend alanları (opsiyonel — eski backend'de gelmez, UI kontrol eder)
+  todayVisit?: {
+    visitedToday: boolean;
+    grantCount: number;
+    pointsToday: number;
+    lastGrantAt: string | null;
+  };
+  activeCampaigns?: Array<{
+    id: string;
+    name: string;
+    type: string;
+    description: string | null;
+    summary: string;
+    isApplicableNow: boolean;
+  }>;
 }
 
 interface ActionResult {

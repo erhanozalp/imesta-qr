@@ -85,7 +85,7 @@
             class="inline-flex items-center rounded-xl bg-emerald-500 px-4 py-1.5 text-xs font-semibold text-slate-950 shadow-md shadow-emerald-500/30 hover:bg-emerald-400"
             @click="emit('close')"
           >
-            Tamam
+            Tamam{{ countdown !== null ? ` (${countdown})` : '' }}
           </button>
         </div>
       </section>
@@ -94,7 +94,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed, onUnmounted, ref, watch } from 'vue';
 
 interface ResultDetails {
   pointsBefore: number;
@@ -129,6 +129,40 @@ const emit = defineEmits<{
 
 const result = computed(() => props.result);
 const visible = computed(() => props.visible);
+
+// Başarılı işlemde 3 sn sonra otomatik kapan (kasiyer yeni okutmaya hazır olsun).
+// Hata durumunda otomatik KAPANMAZ — kasiyer hatayı görmeli.
+const AUTO_CLOSE_SECONDS = 3;
+const countdown = ref<number | null>(null);
+let countdownTimer: number | null = null;
+
+const clearCountdown = () => {
+  if (countdownTimer !== null) {
+    window.clearInterval(countdownTimer);
+    countdownTimer = null;
+  }
+  countdown.value = null;
+};
+
+watch(
+  () => props.visible,
+  (isVisible) => {
+    clearCountdown();
+    if (isVisible && props.result?.success) {
+      countdown.value = AUTO_CLOSE_SECONDS;
+      countdownTimer = window.setInterval(() => {
+        if (countdown.value === null) return;
+        countdown.value -= 1;
+        if (countdown.value <= 0) {
+          clearCountdown();
+          emit('close');
+        }
+      }, 1000);
+    }
+  },
+);
+
+onUnmounted(clearCountdown);
 </script>
 
 

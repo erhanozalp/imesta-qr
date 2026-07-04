@@ -46,12 +46,13 @@ pub async fn list_ports() -> Result<Vec<PortInfo>, String> {
         .collect())
 }
 
-/// Port taraması yapar ve otomatik bağlanır
+/// Port taraması yapar ve otomatik bağlanır.
+/// `baud` gönderilmezse varsayılan (9600) kullanılır — eski istemcilerle geriye uyumlu.
 #[tauri::command]
-pub async fn scan_for_port() -> Result<ScanResult, String> {
+pub async fn scan_for_port(baud: Option<u32>) -> Result<ScanResult, String> {
     let manager = SERIAL_MANAGER.lock().await;
-    
-    match manager.scan_for_port() {
+
+    match manager.scan_for_port(baud.unwrap_or(crate::serial::DEFAULT_BAUD)) {
         Ok(port_name) => Ok(ScanResult {
             success: true,
             port: Some(port_name),
@@ -67,9 +68,9 @@ pub async fn scan_for_port() -> Result<ScanResult, String> {
 
 /// Belirli bir porta bağlanır
 #[tauri::command]
-pub async fn connect_port(port_name: String) -> Result<(), String> {
+pub async fn connect_port(port_name: String, baud: Option<u32>) -> Result<(), String> {
     let manager = SERIAL_MANAGER.lock().await;
-    manager.connect(&port_name)
+    manager.connect(&port_name, baud.unwrap_or(crate::serial::DEFAULT_BAUD))
 }
 
 /// Port bağlantısını kapatır

@@ -6,6 +6,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const autoScanEnabled = ref(true);
   const minimizeOnClose = ref(true);
   const startMinimized = ref(false);
+  const baudRate = ref(9600); // QR okuyucu seri hızı (varsayılan 9600 — geriye uyumlu)
 
   // LocalStorage'dan ayarları yükle
   function loadSettings() {
@@ -17,6 +18,7 @@ export const useSettingsStore = defineStore('settings', () => {
         autoScanEnabled.value = settings.autoScanEnabled ?? true;
         minimizeOnClose.value = settings.minimizeOnClose ?? true;
         startMinimized.value = settings.startMinimized ?? false;
+        baudRate.value = settings.baudRate ?? 9600;
       }
     } catch (e) {
       console.warn('Ayarlar yüklenemedi:', e);
@@ -31,6 +33,7 @@ export const useSettingsStore = defineStore('settings', () => {
         autoScanEnabled: autoScanEnabled.value,
         minimizeOnClose: minimizeOnClose.value,
         startMinimized: startMinimized.value,
+        baudRate: baudRate.value,
       };
       localStorage.setItem('imesta-qr-settings', JSON.stringify(settings));
     } catch (e) {
@@ -58,6 +61,11 @@ export const useSettingsStore = defineStore('settings', () => {
     saveSettings();
   }
 
+  function setBaudRate(baud: number) {
+    baudRate.value = baud;
+    saveSettings();
+  }
+
   // İlk yüklemede ayarları oku
   loadSettings();
 
@@ -67,11 +75,13 @@ export const useSettingsStore = defineStore('settings', () => {
     autoScanEnabled,
     minimizeOnClose,
     startMinimized,
+    baudRate,
     // actions
     setPort,
     setAutoScan,
     setMinimizeOnClose,
     setStartMinimized,
+    setBaudRate,
     loadSettings,
     saveSettings,
   };

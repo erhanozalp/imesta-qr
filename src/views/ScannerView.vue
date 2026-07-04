@@ -105,6 +105,7 @@ import { storeToRefs } from 'pinia';
 import type { LogEntry } from '@/types/electron.d';
 import { useLogsStore } from '@/stores/logs';
 import { useQRStore } from '@/stores/qr';
+import { useSettingsStore } from '@/stores/settings';
 import { Button, StatusIndicator } from '@/components/ui';
 import { tauriService } from '@/services/tauri';
 import PortSettingsModal from '@/components/PortSettingsModal.vue';
@@ -112,6 +113,7 @@ import { listen } from '@tauri-apps/api/event';
 
 const logsStore = useLogsStore();
 const qrStore = useQRStore();
+const settingsStore = useSettingsStore();
 const { logs, serialPortStatus } = storeToRefs(logsStore);
 
 const isScanning = ref(false);
@@ -158,7 +160,7 @@ const logClass = (type: LogEntry['type']) => {
 const scanForPort = async () => {
   isScanning.value = true;
   try {
-    const result = await tauriService.scanForPort();
+    const result = await tauriService.scanForPort(settingsStore.baudRate);
     const now = new Date().toISOString();
     
     if (result.success && result.port) {

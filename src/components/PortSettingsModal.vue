@@ -106,6 +106,25 @@
           </div>
         </div>
 
+        <!-- Baud Hızı -->
+        <div class="rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2.5">
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex-1">
+              <p class="text-xs font-medium text-slate-50">Baud Hızı</p>
+              <p class="text-[11px] text-slate-400 mt-0.5">
+                Okuyucunuz destekliyorsa 115200 çok daha hızlı okur (emin değilseniz 9600 kalsın)
+              </p>
+            </div>
+            <select
+              v-model.number="localBaudRate"
+              class="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+              @change="handleBaudChange"
+            >
+              <option v-for="b in BAUD_OPTIONS" :key="b" :value="b">{{ b }}</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Pencere Ayarları -->
         <div class="space-y-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2.5">
           <p class="text-xs font-medium text-slate-300">Pencere Ayarları</p>
@@ -164,15 +183,18 @@ const emit = defineEmits<{
 const settingsStore = useSettingsStore();
 const logsStore = useLogsStore();
 
-const { selectedPort, autoScanEnabled, minimizeOnClose, startMinimized } = storeToRefs(settingsStore);
+const { selectedPort, autoScanEnabled, minimizeOnClose, startMinimized, baudRate } = storeToRefs(settingsStore);
 
 const availablePorts = ref<string[]>([]);
 const isScanning = ref(false);
+
+const BAUD_OPTIONS = [9600, 19200, 38400, 57600, 115200];
 
 // Local state for form
 const localAutoScan = ref(autoScanEnabled.value);
 const localMinimizeOnClose = ref(minimizeOnClose.value);
 const localStartMinimized = ref(startMinimized.value);
+const localBaudRate = ref(baudRate.value);
 
 // Watch for external changes
 watch(() => props.visible, (newVal) => {
@@ -180,6 +202,7 @@ watch(() => props.visible, (newVal) => {
     localAutoScan.value = autoScanEnabled.value;
     localMinimizeOnClose.value = minimizeOnClose.value;
     localStartMinimized.value = startMinimized.value;
+    localBaudRate.value = baudRate.value;
     scanPorts();
   }
 });
@@ -229,7 +252,7 @@ const scanPorts = async () => {
 const handlePortChange = async () => {
   if (selectedPort.value) {
     try {
-      await tauriService.connectPort(selectedPort.value);
+      await tauriService.connectPort(selectedPort.value, baudRate.value);
       settingsStore.setPort(selectedPort.value);
       logsStore.addLog({
         type: 'success',
@@ -249,6 +272,28 @@ const handlePortChange = async () => {
 
 const handleAutoScanChange = () => {
   settingsStore.setAutoScan(localAutoScan.value);
+};
+
+const handleBaudChange = async () => {
+  settingsStore.setBaudRate(localBaudRate.value);
+  // Bağlı port varsa yeni hızla yeniden bağlan
+  if (selectedPort.value) {
+    try {
+      await tauriService.connectPort(selectedPort.value, localBaudRate.value);
+      logsStore.addLog({
+        type: 'success',
+        message: `Baud hızı ${localBaudRate.value} olarak ayarlandı (${selectedPort.value})`,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error: any) {
+      logsStore.addLog({
+        type: 'error',
+        message: 'Baud değişiminde yeniden bağlanma başarısız',
+        timestamp: new Date().toISOString(),
+        details: error.message || 'Bilinmeyen hata',
+      });
+    }
+  }
 };
 
 const handleMinimizeOnCloseChange = () => {
