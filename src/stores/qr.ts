@@ -32,6 +32,7 @@ interface CustomerPreview {
     discountPercent?: number;
     pointsCost?: number;
     pointsGain?: number;
+    campaignId?: string; // D1: kampanya aksiyonları için
   }>;
   summary: {
     canRedeemReward: boolean;
@@ -79,6 +80,7 @@ interface ActionResult {
 
 export const useQRStore = defineStore('qr', () => {
   const currentToken = ref<string>('');
+  const currentCode = ref<string>(''); // D4: hızlı kod akışında dolu olur (token yerine)
   const customerPreview = ref<CustomerPreview | null>(null);
   const actionResult = ref<ActionResult | null>(null);
   const isProcessingQR = ref(false);
@@ -125,6 +127,7 @@ export const useQRStore = defineStore('qr', () => {
     lastProcessedToken.value = token;
     lastProcessedTime.value = now;
     currentToken.value = token;
+    currentCode.value = ''; // QR akışı — kodu temizle
 
     // QR kod değerini log'a yaz
     logsStore.addLog({
@@ -189,8 +192,77 @@ export const useQRStore = defineStore('qr', () => {
     }
   }
 
-  async function processAction(actionType: string, quantity: number, logsStore: any) {
-    if (!currentToken.value) return;
+  // Hızlı Kod (D4) ile müşteri getir — QR yerine 6 haneli kod (peek: kodu tüketmez).
+  async function processCodeEntry(code: string, logsStore: any) {
+    const clean = (code || '').trim();
+    if (!clean) return;
+    if (isProcessingQR.value) {
+      logsStore.addLog({
+        type: 'warning',
+        message: 'İşlem zaten devam ediyor',
+        timestamp: new Date().toISOString(),
+      });
+      return;
+    }
+    if (showResultModal.value) {
+      showResultModal.value = false;
+      actionResult.value = null;
+    }
+    isProcessingQR.value = true;
+    currentCode.value = clean;
+    currentToken.value = ''; // kod akışı — token'ı temizle
+    logsStore.addLog({
+      type: 'info',
+      message: `Hızlı kod girildi: ${clean}`,
+      timestamp: new Date().toISOString(),
+    });
+    try {
+      const preview = await apiService.getCustomerPreviewByCode(clean);
+      customerPreview.value = preview as unknown as CustomerPreview;
+      showCustomerModal.value = true;
+      const notifications = useNotificationsStore();
+      notifications.success(`Müşteri bulundu: ${preview.customer.name}`);
+    } catch (err: any) {
+      const errorMessage =
+        err.response?.data?.message || err.message || 'Geçersiz veya süresi dolmuş kod.';
+      const notifications = useNotificationsStore();
+      notifications.error(errorMessage);
+      logsStore.addLog({
+        type: 'error',
+        message: 'Kod ile müşteri bulunamadı',
+        timestamp: new Date().toISOString(),
+        details: errorMessage,
+      });
+      currentCode.value = '';
+      actionResult.value = {
+        success: false,
+        message: errorMessage,
+        customerName: 'Bilinmiyor',
+        action: '',
+        result: {
+          pointsBefore: 0,
+          pointsAfter: 0,
+          authorityPointsBefore: 0,
+          authorityPointsAfter: 0,
+        },
+      };
+      showResultModal.value = true;
+    } finally {
+      isProcessingQR.value = false;
+    }
+  }
+
+  async function processAction(
+    actionType: string,
+    quantity: number,
+    logsStore: any,
+    campaignId?: string,
+  ) {
+    if (!currentToken.value && !currentCode.value) return;
+
+    const actionSource = currentCode.value
+      ? `kod:${currentCode.value}`
+      : currentToken.value.substring(0, 50) + '...';
 
     // Müşteri modalını kapat (işlem yapılırken)
     showCustomerModal.value = false;
@@ -207,10 +279,12 @@ export const useQRStore = defineStore('qr', () => {
         type: 'info',
         message: `İşlem yapılıyor: ${actionType}...`,
         timestamp: new Date().toISOString(),
-        token: currentToken.value.substring(0, 50) + '...',
+        token: actionSource,
       });
 
-      const result = await apiService.processAction(currentToken.value, actionType, quantity);
+      const result = currentCode.value
+        ? await apiService.processActionByCode(currentCode.value, actionType, quantity, campaignId)
+        : await apiService.processAction(currentToken.value, actionType, quantity, campaignId);
       actionResult.value = result;
       showResultModal.value = true;
 
@@ -229,7 +303,7 @@ export const useQRStore = defineStore('qr', () => {
         timestamp: new Date().toISOString(),
         customerName: result.customerName,
         details: result.message,
-        token: currentToken.value.substring(0, 50) + '...',
+        token: actionSource,
       });
 
       // Toast notification
@@ -275,7 +349,7 @@ export const useQRStore = defineStore('qr', () => {
         message: `İşlem başarısız: ${actionType}`,
         timestamp: new Date().toISOString(),
         details: errorMessage,
-        token: currentToken.value.substring(0, 50) + '...',
+        token: actionSource,
       });
     } finally {
       isProcessingQR.value = false;
@@ -286,6 +360,7 @@ export const useQRStore = defineStore('qr', () => {
     showCustomerModal.value = false;
     customerPreview.value = null;
     currentToken.value = '';
+    currentCode.value = '';
     isProcessingQR.value = false;
   }
 
@@ -294,10 +369,12 @@ export const useQRStore = defineStore('qr', () => {
     actionResult.value = null;
     customerPreview.value = null;
     currentToken.value = '';
+    currentCode.value = '';
   }
 
   function reset() {
     currentToken.value = '';
+    currentCode.value = '';
     customerPreview.value = null;
     actionResult.value = null;
     isProcessingQR.value = false;
@@ -310,6 +387,7 @@ export const useQRStore = defineStore('qr', () => {
   return {
     // state
     currentToken,
+    currentCode,
     customerPreview,
     actionResult,
     isProcessingQR,
@@ -317,6 +395,7 @@ export const useQRStore = defineStore('qr', () => {
     showResultModal,
     // actions
     processQRToken,
+    processCodeEntry,
     processAction,
     closeCustomerModal,
     closeResultModal,

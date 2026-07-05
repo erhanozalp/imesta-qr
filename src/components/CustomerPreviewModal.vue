@@ -162,6 +162,20 @@
             </button>
           </div>
 
+          <!-- KAMPANYA HEDİYELERİ (D1) — doğum günü vb. -->
+          <div v-if="giftActions.length" class="space-y-1.5">
+            <p class="text-xs font-medium text-slate-300">🎁 Kampanya</p>
+            <button
+              v-for="a in giftActions"
+              :key="a.type"
+              type="button"
+              class="h-12 w-full rounded-xl border border-pink-500/40 bg-pink-500/5 text-sm font-semibold text-pink-200 transition hover:border-pink-400 hover:bg-pink-500/15 active:scale-95"
+              @click="emitAction(a, 1)"
+            >
+              {{ a.icon }} {{ a.label }}
+            </button>
+          </div>
+
           <!-- İPTAL -->
           <button
             type="button"
@@ -209,6 +223,7 @@ interface AvailableAction {
   discountPercent?: number;
   pointsCost?: number;
   pointsGain?: number;
+  campaignId?: string; // D1: kampanya aksiyonları (CAMPAIGN_DISCOUNT / BIRTHDAY_GIFT)
 }
 
 interface CustomerPreviewData {
@@ -277,6 +292,10 @@ const redeemAction = computed(
 );
 const discountActions = computed(
   () => data.value?.availableActions.filter((a) => a.type.endsWith('_DISCOUNT')) ?? [],
+);
+// D1: kampanya hediyeleri (doğum günü vb. — grant/redeem/discount grubuna girmez)
+const giftActions = computed(
+  () => data.value?.availableActions.filter((a) => a.type === 'BIRTHDAY_GIFT') ?? [],
 );
 
 // İlerleme: puan % ödül maliyeti (eski backend pointsForReward göndermez -> redeem aksiyonundaki pointsCost'a düş)

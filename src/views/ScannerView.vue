@@ -27,6 +27,30 @@
       />
     </div>
 
+    <!-- Hızlı Kod (D4) — QR okunmazsa 6 haneli kodla müşteri getir -->
+    <form
+      class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2.5"
+      @submit.prevent="submitCode"
+    >
+      <span class="text-base">🔢</span>
+      <input
+        v-model="codeInput"
+        inputmode="numeric"
+        maxlength="6"
+        placeholder="QR okunmuyor mu? 6 haneli kodu gir"
+        class="min-w-0 flex-1 bg-transparent text-sm tracking-widest text-slate-100 placeholder:text-slate-500 focus:outline-none"
+        @input="onCodeInput"
+      />
+      <Button
+        type="submit"
+        variant="primary"
+        size="sm"
+        :disabled="codeInput.length < 4 || qrBusy"
+      >
+        Getir
+      </Button>
+    </form>
+
     <!-- Log Alanı -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
@@ -115,9 +139,22 @@ const logsStore = useLogsStore();
 const qrStore = useQRStore();
 const settingsStore = useSettingsStore();
 const { logs, serialPortStatus } = storeToRefs(logsStore);
+const { isProcessingQR: qrBusy } = storeToRefs(qrStore);
 
 const isScanning = ref(false);
 const showSettings = ref(false);
+const codeInput = ref('');
+
+// Hızlı Kod (D4): yalnızca rakam, en fazla 6 hane
+const onCodeInput = () => {
+  codeInput.value = codeInput.value.replace(/\D/g, '').slice(0, 6);
+};
+const submitCode = async () => {
+  const c = codeInput.value.trim();
+  if (c.length < 4) return;
+  await qrStore.processCodeEntry(c, logsStore);
+  codeInput.value = '';
+};
 
 // Port durumunu periyodik olarak kontrol et
 let statusLoopTimeout: number | null = null;
@@ -154,6 +191,46 @@ const logClass = (type: LogEntry['type']) => {
       return 'border-amber-500/40 bg-amber-500/5 text-amber-100';
     default:
       return 'border-slate-600 bg-slate-800/60 text-slate-100';
+  }
+};
+
+// --- Klavye modu (keyboard-wedge) QR yakalama (D8) ---
+// GÜVENLİ yaklaşım: yalnızca uygulama penceresi ODAKLIYKEN window keydown dinlenir.
+// Sistem geneli / global hook YOK → macOS Accessibility izni, keylogger/antivirüs riski YOK.
+// Klavye modundaki okuyucu QR'ı hızlıca "yazar" ve Enter ile bitirir. Bir input/textarea'ya
+// (Kod Gir, login vb.) yazılıyorsa karışmaz. Seri port yoluna dokunmaz; processQRToken'ın
+// kendi kilidi + cooldown'u çift işlemeyi önler.
+let kbBuffer = '';
+let kbLastKeyTime = 0;
+const KB_RESET_GAP_MS = 300; // tuşlar arası bu süreden uzun boşluk → tampon sıfırlanır (insan yazımı elenir)
+const KB_MIN_LEN = 6; // en az bu uzunluktaki dizi "tarama" sayılır
+
+const onKeyboardWedge = (e: KeyboardEvent) => {
+  const el = e.target as HTMLElement | null;
+  const tag = el?.tagName;
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || el?.isContentEditable) return; // input'a karışma
+
+  const now = Date.now();
+  if (now - kbLastKeyTime > KB_RESET_GAP_MS) kbBuffer = '';
+  kbLastKeyTime = now;
+
+  if (e.key === 'Enter') {
+    const code = kbBuffer.trim();
+    kbBuffer = '';
+    if (code.length >= KB_MIN_LEN) {
+      logsStore.addLog({
+        type: 'info',
+        message: `QR yakalandı (klavye modu): ${code}`,
+        timestamp: new Date().toISOString(),
+        token: code,
+      });
+      qrStore.processQRToken(code, logsStore);
+    }
+    return;
+  }
+
+  if (e.key.length === 1) {
+    kbBuffer += e.key; // tek yazdırılabilir karakter
   }
 };
 
@@ -248,6 +325,9 @@ const pollQRCode = async () => {
 };
 
 onMounted(async () => {
+  // Klavye modu (keyboard-wedge) yakalama — yalnızca pencere odaklıyken (D8)
+  window.addEventListener('keydown', onKeyboardWedge);
+
   // İlk port durumu kontrolü
   await checkPortStatus();
   
@@ -342,6 +422,7 @@ onMounted(async () => {
 onUnmounted(async () => {
   stopStatusLoop = true;
   stopQrLoop = true;
+  window.removeEventListener('keydown', onKeyboardWedge); // klavye modu yakalamayı kaldır (D8)
   if (statusLoopTimeout) window.clearTimeout(statusLoopTimeout);
   if (qrLoopTimeout) window.clearTimeout(qrLoopTimeout);
   

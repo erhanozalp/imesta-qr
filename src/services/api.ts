@@ -264,7 +264,7 @@ export const apiService = {
     return response.data;
   },
 
-  async processAction(customerToken: string, action: string, quantity = 1) {
+  async processAction(customerToken: string, action: string, quantity = 1, campaignId?: string) {
     const response = await apiClient.post<{
       success: boolean;
       message: string;
@@ -285,6 +285,70 @@ export const apiService = {
       customerToken,
       action,
       quantity,
+      ...(campaignId ? { campaignId } : {}),
+    });
+    return response.data;
+  },
+
+  // --- Hızlı Kod / QR Yedek (D4) — QR okunmadığında 6 haneli kodla ---
+  async getCustomerPreviewByCode(code: string) {
+    const response = await apiClient.get<{
+      customer: {
+        id: string;
+        name: string;
+        email: string;
+        points: number;
+        authorityPoints: number;
+      };
+      customerType: 'NORMAL' | 'STUDENT' | 'PARTNER' | 'STUDENT_PARTNER';
+      rank: unknown;
+      availableActions: Array<{
+        type: string;
+        label: string;
+        description: string;
+        icon: string;
+        isRecommended?: boolean;
+        discountPercent?: number;
+        pointsCost?: number;
+        pointsGain?: number;
+        campaignId?: string;
+      }>;
+      summary: {
+        canRedeemReward: boolean;
+        freeCoffeesAvailable: number;
+        hasStudentDiscount: boolean;
+        hasPartnerDiscount: boolean;
+        studentDiscountPercent: number;
+        partnerDiscountPercent: number;
+      };
+    }>('/transactions/customer-preview-by-code', {
+      params: { code },
+    });
+    return response.data;
+  },
+
+  async processActionByCode(code: string, action: string, quantity = 1, campaignId?: string) {
+    const response = await apiClient.post<{
+      success: boolean;
+      message: string;
+      customerName: string;
+      action: string;
+      result: {
+        pointsBefore: number;
+        pointsAfter: number;
+        authorityPointsBefore: number;
+        authorityPointsAfter: number;
+        discountApplied?: number;
+      };
+      rank?: {
+        title: string;
+        changed: boolean;
+      };
+    }>('/transactions/process-action-by-code', {
+      code,
+      action,
+      quantity,
+      ...(campaignId ? { campaignId } : {}),
     });
     return response.data;
   },
