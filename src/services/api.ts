@@ -264,7 +264,7 @@ export const apiService = {
     return response.data;
   },
 
-  async processAction(customerToken: string, action: string, quantity = 1, campaignId?: string) {
+  async processAction(customerToken: string, action: string, quantity = 1, campaignId?: string, durationMs?: number) {
     const response = await apiClient.post<{
       success: boolean;
       message: string;
@@ -286,6 +286,7 @@ export const apiService = {
       action,
       quantity,
       ...(campaignId ? { campaignId } : {}),
+      ...(durationMs != null ? { durationMs } : {}),
     });
     return response.data;
   },
@@ -327,7 +328,7 @@ export const apiService = {
     return response.data;
   },
 
-  async processActionByCode(code: string, action: string, quantity = 1, campaignId?: string) {
+  async processActionByCode(code: string, action: string, quantity = 1, campaignId?: string, durationMs?: number) {
     const response = await apiClient.post<{
       success: boolean;
       message: string;
@@ -349,6 +350,7 @@ export const apiService = {
       action,
       quantity,
       ...(campaignId ? { campaignId } : {}),
+      ...(durationMs != null ? { durationMs } : {}),
     });
     return response.data;
   },

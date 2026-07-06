@@ -166,7 +166,11 @@ let isQrPolling = false;
 let isProcessingQR = false;
 
 const PORT_STATUS_MS = 2000;
-const QR_POLL_MS = 100;
+// D7 (güvenli): polling aralığı 100→20ms. read_data() zaten veri gelince anında döner;
+// tarama iki poll ARASINA denk gelirse gecikirdi — aralığı kısaltmak worst-case gecikmeyi
+// ~100ms'den ~20ms'ye indirir. Seri mimari/deadlock fix DEĞİŞMEZ (sıfır risk).
+// (Tam event-push için serial.rs'i tek-okuyucu yapmak gerekir — gerçek okuyucu testi ister.)
+const QR_POLL_MS = 20;
 
 const clearLogs = () => {
   logsStore.clearLogs();

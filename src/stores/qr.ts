@@ -81,6 +81,7 @@ interface ActionResult {
 export const useQRStore = defineStore('qr', () => {
   const currentToken = ref<string>('');
   const currentCode = ref<string>(''); // D4: hızlı kod akışında dolu olur (token yerine)
+  const previewShownAt = ref<number>(0); // D10: önizleme açıldığı an (kasiyer karar süresi ölçümü)
   const customerPreview = ref<CustomerPreview | null>(null);
   const actionResult = ref<ActionResult | null>(null);
   const isProcessingQR = ref(false);
@@ -156,6 +157,7 @@ export const useQRStore = defineStore('qr', () => {
       const preview = await apiService.getCustomerPreview(token);
       customerPreview.value = preview;
       showCustomerModal.value = true;
+      previewShownAt.value = Date.now(); // D10: önizleme açıldı → süre ölçümü başlar
       
       const notifications = useNotificationsStore();
       notifications.success(`Müşteri bulundu: ${preview.customer.name}`);
@@ -220,6 +222,7 @@ export const useQRStore = defineStore('qr', () => {
       const preview = await apiService.getCustomerPreviewByCode(clean);
       customerPreview.value = preview as unknown as CustomerPreview;
       showCustomerModal.value = true;
+      previewShownAt.value = Date.now(); // D10: önizleme açıldı → süre ölçümü başlar
       const notifications = useNotificationsStore();
       notifications.success(`Müşteri bulundu: ${preview.customer.name}`);
     } catch (err: any) {
@@ -282,9 +285,11 @@ export const useQRStore = defineStore('qr', () => {
         token: actionSource,
       });
 
+      // D10: önizleme açıldığından bu yana geçen süre (kasiyer karar süresi), 10 dk ile sınırlı
+      const durationMs = previewShownAt.value > 0 ? Math.min(600000, Date.now() - previewShownAt.value) : undefined;
       const result = currentCode.value
-        ? await apiService.processActionByCode(currentCode.value, actionType, quantity, campaignId)
-        : await apiService.processAction(currentToken.value, actionType, quantity, campaignId);
+        ? await apiService.processActionByCode(currentCode.value, actionType, quantity, campaignId, durationMs)
+        : await apiService.processAction(currentToken.value, actionType, quantity, campaignId, durationMs);
       actionResult.value = result;
       showResultModal.value = true;
 
