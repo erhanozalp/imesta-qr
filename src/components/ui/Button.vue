@@ -36,14 +36,14 @@ defineEmits<{
 }>();
 
 const buttonClasses = computed(() => {
-  const base = 'inline-flex items-center justify-center font-semibold transition disabled:cursor-not-allowed disabled:opacity-60';
-  
+  const base = 'inline-flex items-center justify-center font-semibold transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60';
+
   const variants = {
-    primary: 'bg-gradient-to-r from-emerald-400 to-sky-400 text-slate-950 shadow-lg shadow-emerald-500/30 hover:brightness-110',
-    secondary: 'bg-slate-800 text-slate-50 border border-slate-700 hover:bg-slate-700 hover:border-slate-600',
-    danger: 'bg-red-500 text-white shadow-md shadow-red-500/30 hover:bg-red-600',
-    ghost: 'text-slate-300 hover:bg-slate-800 hover:text-slate-50',
-    outline: 'border border-slate-700 bg-slate-900/70 text-slate-200 hover:border-slate-500 hover:bg-slate-800',
+    primary: 'border border-[#9A4B4B] bg-[#7C3434] text-[#F6E4E4] hover:bg-[#8A3B3B]',
+    secondary: 'border border-white/[0.12] bg-white/[0.06] text-[#F3EAEA] hover:border-white/20 hover:bg-white/[0.1]',
+    danger: 'bg-[#C0392B] text-white hover:bg-[#A93226]',
+    ghost: 'text-[#C9BABA] hover:bg-white/[0.06] hover:text-[#F3EAEA]',
+    outline: 'border border-white/[0.12] bg-white/[0.03] text-[#D3C4C4] hover:border-white/25 hover:bg-white/[0.07]',
   };
 
   const sizes = {

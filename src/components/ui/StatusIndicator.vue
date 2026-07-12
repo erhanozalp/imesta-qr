@@ -2,8 +2,8 @@
   <div :class="containerClasses">
     <span :class="dotClasses"></span>
     <span class="text-xs font-medium">{{ label || statusText }}</span>
-    <span v-if="showPort && port" class="text-slate-500">•</span>
-    <span v-if="showPort && port" class="text-slate-400 text-[11px]">
+    <span v-if="showPort && port" class="text-[#7E6E6E]">•</span>
+    <span v-if="showPort && port" class="text-[#A89597] text-[11px]">
       Port: {{ port }}
     </span>
   </div>
@@ -34,12 +34,12 @@ const statusText = computed(() => {
 });
 
 const containerClasses = computed(() => {
-  return 'inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/80 px-4 py-2 text-xs font-medium text-slate-300';
+  return 'inline-flex items-center gap-2 rounded-full border border-white/[0.12] bg-[#1E1618] px-4 py-2 text-xs font-medium text-[#C9BABA]';
 });
 
 const dotClasses = computed(() => {
   const base = 'h-2 w-2 rounded-full';
-  
+
   const statusClasses = {
     listening: 'bg-emerald-400 animate-pulse',
     closed: 'bg-amber-400 animate-pulse',
@@ -50,5 +50,3 @@ const dotClasses = computed(() => {
   return `${base} ${statusClasses[props.status]}`;
 });
 </script>
-
-

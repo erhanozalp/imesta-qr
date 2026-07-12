@@ -9,7 +9,7 @@ import { computed } from 'vue';
 
 interface Props {
   size?: 'sm' | 'md' | 'lg';
-  color?: 'default' | 'emerald' | 'sky' | 'white';
+  color?: 'default' | 'bordo' | 'gold' | 'white';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -29,14 +29,12 @@ const spinnerClasses = computed(() => {
 
 const spinnerStyle = computed(() => {
   const colors = {
-    default: 'color: rgb(148 163 184)', // slate-400
-    emerald: 'color: rgb(52 211 153)', // emerald-400
-    sky: 'color: rgb(56 189 248)', // sky-400
-    white: 'color: rgb(255 255 255)',
+    default: 'color: rgb(168 149 151)', // warm muted
+    bordo: 'color: rgb(206 129 129)', // #CE8181
+    gold: 'color: rgb(224 177 94)', // #E0B15E
+    white: 'color: rgb(243 234 234)',
   };
 
   return colors[props.color];
 });
 </script>
-
-

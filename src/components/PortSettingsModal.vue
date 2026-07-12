@@ -7,13 +7,13 @@
     <Card variant="elevated" class="w-full max-w-md">
       <template #header>
         <div class="flex items-center justify-between">
-          <h3 class="text-sm font-semibold text-slate-50 flex items-center gap-2">
+          <h3 class="text-sm font-semibold text-[#F3EAEA] flex items-center gap-2">
             <span class="text-lg">⚙️</span>
             Port Ayarları
           </h3>
           <button
             type="button"
-            class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+            class="flex h-7 w-7 items-center justify-center rounded-full text-[#A89597] hover:bg-white/[0.06] hover:text-[#F3EAEA]"
             @click="emit('close')"
           >
             ✕
@@ -23,10 +23,10 @@
 
       <div class="space-y-4">
         <!-- Otomatik Tarama Toggle -->
-        <div class="flex items-center justify-between rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2.5">
+        <div class="flex items-center justify-between rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
           <div class="flex-1">
-            <p class="text-xs font-medium text-slate-50">Otomatik Port Tarama</p>
-            <p class="text-[11px] text-slate-400 mt-0.5">
+            <p class="text-xs font-medium text-[#F3EAEA]">Otomatik Port Tarama</p>
+            <p class="text-[11px] text-[#A89597] mt-0.5">
               Başlangıçta otomatik olarak portları tara
             </p>
           </div>
@@ -38,7 +38,7 @@
               @change="handleAutoScanChange"
             />
             <div
-              class="peer h-5 w-9 rounded-full bg-slate-700 transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-emerald-500 peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-emerald-500/30"
+              class="peer h-5 w-9 rounded-full bg-white/15 transition-colors after:absolute after:left-[2px] after:top-[2px] after:h-4 after:w-4 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:bg-[#8C3A3A] peer-checked:after:translate-x-full peer-focus:ring-2 peer-focus:ring-[#773030]/40"
             ></div>
           </label>
         </div>
@@ -46,7 +46,7 @@
         <!-- Port Listesi -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
-            <p class="text-xs font-medium text-slate-300">Mevcut Portlar</p>
+            <p class="text-xs font-medium text-[#C9BABA]">Mevcut Portlar</p>
             <Button
               variant="ghost"
               size="sm"
@@ -61,7 +61,7 @@
 
           <div
             v-if="availablePorts.length > 0"
-            class="max-h-48 space-y-1.5 overflow-y-auto rounded-lg border border-slate-800 bg-slate-950/50 p-2"
+            class="max-h-48 space-y-1.5 overflow-y-auto rounded-lg border border-white/[0.08] bg-black/25 p-2"
           >
             <label
               v-for="port in availablePorts"
@@ -69,8 +69,8 @@
               class="flex cursor-pointer items-center gap-2 rounded-lg border px-3 py-2 transition"
               :class="
                 selectedPort === port
-                  ? 'border-emerald-500/50 bg-emerald-500/10'
-                  : 'border-slate-700 bg-slate-900/70 hover:border-slate-600'
+                  ? 'border-[#9A4B4B] bg-[#7C3434]/25'
+                  : 'border-white/[0.1] bg-white/[0.03] hover:border-white/20'
               "
             >
               <input
@@ -78,16 +78,16 @@
                 type="radio"
                 :value="port"
                 name="port"
-                class="h-3 w-3 border-slate-600 text-emerald-500 focus:ring-emerald-500/30"
+                class="h-3 w-3 border-white/20 text-[#8C3A3A] focus:ring-[#773030]/30"
                 @change="handlePortChange"
               />
               <div class="flex-1">
-                <p class="text-xs font-medium text-slate-50">{{ port }}</p>
-                <p class="text-[10px] text-slate-400">
+                <p class="text-xs font-medium text-[#F3EAEA]">{{ port }}</p>
+                <p class="text-[10px] text-[#A89597]">
                   {{ selectedPort === port ? 'Seçili' : 'Seçmek için tıklayın' }}
                 </p>
               </div>
-              <Badge v-if="selectedPort === port" variant="success" size="sm">
+              <Badge v-if="selectedPort === port" variant="default" size="sm">
                 Aktif
               </Badge>
             </label>
@@ -95,29 +95,29 @@
 
           <div
             v-else
-            class="rounded-lg border border-slate-800 bg-slate-950/50 px-4 py-6 text-center"
+            class="rounded-lg border border-white/[0.08] bg-black/25 px-4 py-6 text-center"
           >
-            <p class="text-xs text-slate-400">
+            <p class="text-xs text-[#A89597]">
               {{ isScanning ? 'Portlar taranıyor...' : 'Henüz port bulunamadı' }}
             </p>
-            <p v-if="!isScanning" class="mt-1 text-[10px] text-slate-500">
+            <p v-if="!isScanning" class="mt-1 text-[10px] text-[#7E6E6E]">
               QR cihazınızı bağlayın ve "Yenile" butonuna tıklayın
             </p>
           </div>
         </div>
 
         <!-- Baud Hızı -->
-        <div class="rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2.5">
+        <div class="rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
           <div class="flex items-center justify-between gap-3">
             <div class="flex-1">
-              <p class="text-xs font-medium text-slate-50">Baud Hızı</p>
-              <p class="text-[11px] text-slate-400 mt-0.5">
+              <p class="text-xs font-medium text-[#F3EAEA]">Baud Hızı</p>
+              <p class="text-[11px] text-[#A89597] mt-0.5">
                 Okuyucunuz destekliyorsa 115200 çok daha hızlı okur (emin değilseniz 9600 kalsın)
               </p>
             </div>
             <select
               v-model.number="localBaudRate"
-              class="rounded-lg border border-slate-700 bg-slate-900 px-2 py-1.5 text-xs text-slate-100 focus:border-emerald-400 focus:outline-none"
+              class="rounded-lg border border-white/[0.12] bg-white/[0.05] px-2 py-1.5 text-xs text-[#F3EAEA] focus:border-[#9A4B4B] focus:outline-none"
               @change="handleBaudChange"
             >
               <option v-for="b in BAUD_OPTIONS" :key="b" :value="b">{{ b }}</option>
@@ -126,25 +126,25 @@
         </div>
 
         <!-- Pencere Ayarları -->
-        <div class="space-y-2 rounded-lg border border-slate-800 bg-slate-900/50 px-3 py-2.5">
-          <p class="text-xs font-medium text-slate-300">Pencere Ayarları</p>
+        <div class="space-y-2 rounded-lg border border-white/[0.08] bg-white/[0.03] px-3 py-2.5">
+          <p class="text-xs font-medium text-[#C9BABA]">Pencere Ayarları</p>
 
           <label class="flex cursor-pointer items-center justify-between py-1.5">
-            <span class="text-xs text-slate-400">Kapatıldığında simge durumuna küçült</span>
+            <span class="text-xs text-[#A89597]">Kapatıldığında simge durumuna küçült</span>
             <input
               v-model="localMinimizeOnClose"
               type="checkbox"
-              class="h-4 w-4 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500/30"
+              class="h-4 w-4 rounded border-white/20 text-[#8C3A3A] focus:ring-[#773030]/30"
               @change="handleMinimizeOnCloseChange"
             />
           </label>
 
           <label class="flex cursor-pointer items-center justify-between py-1.5">
-            <span class="text-xs text-slate-400">Başlangıçta simge durumunda başlat</span>
+            <span class="text-xs text-[#A89597]">Başlangıçta simge durumunda başlat</span>
             <input
               v-model="localStartMinimized"
               type="checkbox"
-              class="h-4 w-4 rounded border-slate-600 text-emerald-500 focus:ring-emerald-500/30"
+              class="h-4 w-4 rounded border-white/20 text-[#8C3A3A] focus:ring-[#773030]/30"
               @change="handleStartMinimizedChange"
             />
           </label>
@@ -212,10 +212,10 @@ const scanPorts = async () => {
   try {
     // Tauri service ile port listesi al
     const ports = await tauriService.listPorts();
-    
+
     if (ports.length > 0) {
       availablePorts.value = ports.map(p => p.name);
-      
+
       // Eğer seçili port yoksa, ilk portu seç
       if (!selectedPort.value && ports.length > 0) {
         settingsStore.setPort(ports[0].name);
@@ -304,4 +304,3 @@ const handleStartMinimizedChange = () => {
   settingsStore.setStartMinimized(localStartMinimized.value);
 };
 </script>
-

@@ -2,10 +2,10 @@
   <div class="space-y-5">
     <div class="flex items-center justify-between">
       <div>
-        <h2 class="text-lg font-semibold text-slate-50 tracking-tight">
+        <h2 class="text-lg font-semibold text-[#F3EAEA] tracking-tight">
           QR Scanner Aktif
         </h2>
-        <p class="text-xs text-slate-400 mt-0.5">
+        <p class="text-xs text-[#A89597] mt-0.5">
           QR okutulduğunda müşteri bilgileri ve işlemler burada görünecek.
         </p>
       </div>
@@ -29,7 +29,7 @@
 
     <!-- Hızlı Kod (D4) — QR okunmazsa 6 haneli kodla müşteri getir -->
     <form
-      class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2.5"
+      class="flex items-center gap-2 rounded-xl border border-white/[0.08] bg-black/25 px-3 py-2.5"
       @submit.prevent="submitCode"
     >
       <span class="text-base">🔢</span>
@@ -38,7 +38,7 @@
         inputmode="numeric"
         maxlength="6"
         placeholder="QR okunmuyor mu? 6 haneli kodu gir"
-        class="min-w-0 flex-1 bg-transparent text-sm tracking-widest text-slate-100 placeholder:text-slate-500 focus:outline-none"
+        class="min-w-0 flex-1 bg-transparent text-sm tracking-widest text-[#F3EAEA] placeholder:text-[#7E6E6E] focus:outline-none"
         @input="onCodeInput"
       />
       <Button
@@ -54,12 +54,12 @@
     <!-- Log Alanı -->
     <div class="space-y-2">
       <div class="flex items-center justify-between">
-        <h3 class="text-xs font-medium text-slate-300 uppercase tracking-wide">
+        <h3 class="text-xs font-medium text-[#C9BABA] uppercase tracking-wide">
           Loglar
         </h3>
         <button
           type="button"
-          class="text-[11px] text-slate-400 hover:text-slate-200"
+          class="text-[11px] text-[#A89597] hover:text-[#D3C4C4]"
           @click="clearLogs"
         >
           Temizle
@@ -67,7 +67,7 @@
       </div>
 
       <div
-        class="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-slate-800 bg-slate-950/50 px-3 py-2 text-xs"
+        class="max-h-64 space-y-2 overflow-y-auto rounded-xl border border-white/[0.08] bg-black/25 px-3 py-2 text-xs"
       >
         <div
           v-for="(log, index) in logs"
@@ -77,16 +77,16 @@
         >
           <div class="flex items-center justify-between">
             <span class="font-medium">{{ log.message }}</span>
-            <span class="text-[10px] text-slate-400">
+            <span class="text-[10px] text-[#A89597]">
               {{ formatTime(log.timestamp) }}
             </span>
           </div>
-          <p v-if="log.details" class="mt-0.5 text-[11px] text-slate-300">
+          <p v-if="log.details" class="mt-0.5 text-[11px] text-[#C9BABA]">
             {{ log.details }}
           </p>
         </div>
 
-        <p v-if="logs.length === 0" class="py-6 text-center text-[11px] text-slate-500">
+        <p v-if="logs.length === 0" class="py-6 text-center text-[11px] text-[#7E6E6E]">
           Henüz log yok. QR kod okutulduğunda kayıtlar burada görünecek.
         </p>
       </div>
@@ -194,7 +194,7 @@ const logClass = (type: LogEntry['type']) => {
     case 'warning':
       return 'border-amber-500/40 bg-amber-500/5 text-amber-100';
     default:
-      return 'border-slate-600 bg-slate-800/60 text-slate-100';
+      return 'border-white/10 bg-white/[0.05] text-[#F3EAEA]';
   }
 };
 

@@ -1,34 +1,34 @@
 <template>
-  <div class="min-h-screen bg-slate-950 text-slate-50 flex items-center justify-center">
+  <div class="min-h-screen bg-[#1B1416] text-[#F3EAEA] flex items-center justify-center">
     <div class="w-full max-w-2xl px-4">
       <header class="mb-8 text-center">
         <h1 class="text-3xl font-bold tracking-tight">
-          <span class="bg-gradient-to-r from-emerald-400 to-sky-400 bg-clip-text text-transparent">
+          <span class="bg-gradient-to-r from-[#D68A8A] to-[#9B4545] bg-clip-text text-transparent">
             Imesta QR Scanner
           </span>
         </h1>
-        <p class="mt-2 text-sm text-slate-400">
+        <p class="mt-2 text-sm text-[#A89597]">
           Kasiyerler için hızlı QR okuma ve müşteri yönetimi
         </p>
       </header>
 
       <main>
         <div
-          class="rounded-2xl border border-slate-800 bg-slate-900/70 shadow-xl shadow-emerald-500/10 backdrop-blur px-6 py-6"
+          class="rounded-2xl border border-white/[0.08] bg-[#1E1618] shadow-xl shadow-black/30 px-6 py-6"
         >
           <!-- Henüz login olmadıysa -->
           <LoginView v-if="!isAuthenticated" />
 
           <!-- Login olduysa ana scanner ekranı -->
           <div v-else class="space-y-4">
-            <div class="flex items-center justify-between text-xs text-slate-400">
+            <div class="flex items-center justify-between text-xs text-[#A89597]">
               <span>
                 Hoş geldin,
-                <span class="font-semibold text-emerald-300">{{ userName }}</span>
+                <span class="font-semibold text-[#CE8181]">{{ userName }}</span>
               </span>
               <button
                 type="button"
-                class="inline-flex items-center rounded-lg border border-slate-700 bg-slate-900 px-2 py-1 text-[11px] font-medium text-slate-200 hover:border-emerald-400 hover:text-emerald-200"
+                class="inline-flex items-center rounded-lg border border-white/[0.12] bg-white/[0.05] px-2 py-1 text-[11px] font-medium text-[#D3C4C4] hover:border-[#9A4B4B] hover:text-[#CE8181]"
                 @click="logout"
               >
                 Çıkış

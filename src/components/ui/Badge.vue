@@ -19,9 +19,9 @@ const props = withDefaults(defineProps<Props>(), {
 
 const badgeClasses = computed(() => {
   const base = 'inline-flex items-center font-medium rounded-full';
-  
+
   const variants = {
-    default: 'bg-slate-800 text-slate-200 border border-slate-700',
+    default: 'bg-white/[0.06] text-[#D3C4C4] border border-white/[0.12]',
     success: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40',
     warning: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',
     error: 'bg-red-500/20 text-red-300 border border-red-500/40',
@@ -36,5 +36,3 @@ const badgeClasses = computed(() => {
   return `${base} ${variants[props.variant]} ${sizes[props.size]}`;
 });
 </script>
-
-

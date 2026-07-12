@@ -1,12 +1,12 @@
 <template>
   <div :class="cardClasses">
-    <div v-if="$slots.header" class="border-b border-slate-800 px-5 py-3">
+    <div v-if="$slots.header" class="border-b border-white/[0.08] px-5 py-3">
       <slot name="header" />
     </div>
     <div :class="contentClasses">
       <slot />
     </div>
-    <div v-if="$slots.footer" class="border-t border-slate-800 px-5 py-3">
+    <div v-if="$slots.footer" class="border-t border-white/[0.08] px-5 py-3">
       <slot name="footer" />
     </div>
   </div>
@@ -28,11 +28,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const cardClasses = computed(() => {
-  const base = 'rounded-2xl border border-slate-800 bg-slate-900/70 shadow-xl backdrop-blur';
-  
+  const base = 'rounded-2xl border border-white/[0.08] bg-[#1E1618]';
+
   const variants = {
-    default: 'shadow-emerald-500/10',
-    elevated: 'shadow-2xl shadow-emerald-500/20',
+    default: 'shadow-xl shadow-black/30',
+    elevated: 'shadow-2xl shadow-black/40',
     outlined: 'shadow-none',
   };
 
@@ -41,7 +41,7 @@ const cardClasses = computed(() => {
 
 const contentClasses = computed(() => {
   if (props.noPadding) return '';
-  
+
   const paddings = {
     none: '',
     sm: 'px-3 py-2',
@@ -52,5 +52,3 @@ const contentClasses = computed(() => {
   return paddings[props.padding];
 });
 </script>
-
-

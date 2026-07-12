@@ -5,7 +5,7 @@
         <div
           v-for="toast in toasts"
           :key="toast.id"
-          class="pointer-events-auto flex min-w-[300px] max-w-md items-start gap-3 rounded-xl border px-4 py-3 shadow-lg backdrop-blur"
+          class="pointer-events-auto flex min-w-[300px] max-w-md items-start gap-3 rounded-xl border px-4 py-3 shadow-lg"
           :class="toastClasses(toast.type)"
           @click="removeToast(toast.id)"
         >
@@ -17,7 +17,7 @@
           </div>
           <button
             type="button"
-            class="flex-shrink-0 text-slate-400 hover:text-slate-200 transition"
+            class="flex-shrink-0 text-[#A89597] hover:text-[#F3EAEA] transition"
             @click.stop="removeToast(toast.id)"
           >
             ✕
@@ -50,13 +50,13 @@ const toastIcon = (type: string) => {
 };
 
 const toastClasses = (type: string) => {
-  const base = 'bg-slate-950/95 text-slate-50';
-  
+  const base = 'bg-[#1E1618] text-[#F3EAEA]';
+
   const variants = {
-    success: `${base} border-emerald-500/50 shadow-emerald-500/20`,
-    error: `${base} border-red-500/50 shadow-red-500/20`,
-    warning: `${base} border-amber-500/50 shadow-amber-500/20`,
-    info: `${base} border-sky-500/50 shadow-sky-500/20`,
+    success: `${base} border-emerald-500/50`,
+    error: `${base} border-red-500/50`,
+    warning: `${base} border-amber-500/50`,
+    info: `${base} border-sky-500/50`,
   };
 
   return variants[type as keyof typeof variants] || variants.info;
@@ -83,5 +83,3 @@ const toastClasses = (type: string) => {
   transition: transform 0.3s ease;
 }
 </style>
-
-

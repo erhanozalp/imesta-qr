@@ -5,113 +5,128 @@
     @click.self="emit('close')"
   >
     <div
-      class="w-full max-w-lg rounded-2xl border border-slate-800 bg-slate-950/95 shadow-2xl shadow-emerald-500/20 backdrop-blur"
+      class="w-full max-w-lg overflow-hidden rounded-[20px] border border-white/[0.08] bg-[#1E1618] shadow-2xl"
     >
-      <header class="flex items-center justify-between border-b border-slate-800 px-5 py-3">
-        <h3 class="text-sm font-semibold text-slate-50 flex items-center gap-2">
-          <span class="text-lg">📱</span>
-          Müşteri
-        </h3>
+      <!-- BAŞLIK: avatar + isim -->
+      <header class="flex items-center gap-3 border-b border-white/[0.07] px-5 py-3.5">
+        <div
+          v-if="data"
+          class="flex h-9 w-9 flex-none items-center justify-center rounded-full bg-[#773030] text-[15px] font-semibold text-[#F6E9E9]"
+        >{{ initial }}</div>
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-[16px] font-semibold leading-tight text-[#F3EAEA]">
+            {{ data ? (data.customer.name || 'İsimsiz Müşteri') : 'Müşteri' }}
+          </p>
+          <p v-if="data" class="truncate text-xs text-[#A89597]">{{ data.customer.email }}</p>
+        </div>
         <button
           type="button"
-          class="flex h-7 w-7 items-center justify-center rounded-full text-slate-400 hover:bg-slate-800 hover:text-slate-100"
+          aria-label="Kapat"
+          class="flex h-8 w-8 flex-none items-center justify-center rounded-full text-[#9A8A8A] transition hover:bg-white/[0.06] hover:text-[#F3EAEA]"
           @click="emit('close')"
         >
-          ✕
+          <svg viewBox="0 0 20 20" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 5l10 10M15 5L5 15" stroke-linecap="round" /></svg>
         </button>
       </header>
 
-      <section class="max-h-[80vh] overflow-y-auto px-5 py-4 text-sm text-slate-100">
-        <div v-if="loading" class="py-10 text-center text-slate-400">
-          <div class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-slate-700 border-t-emerald-400" />
+      <section class="max-h-[80vh] overflow-y-auto px-5 py-4">
+        <div v-if="loading" class="py-12 text-center text-sm text-[#A89597]">
+          <div class="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-white/10 border-t-[#CE8181]" />
           Müşteri bilgileri yükleniyor...
         </div>
 
-        <div v-else-if="data" class="space-y-3">
-          <!-- MÜŞTERİ KARTI -->
-          <div class="rounded-xl border border-slate-800 bg-slate-900/80 px-4 py-3">
-            <div class="flex items-start justify-between gap-2">
-              <div class="min-w-0">
-                <p class="truncate text-lg font-bold text-slate-50">
-                  {{ data.customer.name || 'İsimsiz Müşteri' }}
-                </p>
-                <div class="mt-1 flex flex-wrap gap-1.5 text-[11px] font-medium">
-                  <span
-                    v-if="isStudent"
-                    class="rounded-full bg-sky-500/20 px-2 py-0.5 text-sky-300"
-                  >🎓 Öğrenci</span>
-                  <span
-                    v-if="isPartner"
-                    class="rounded-full bg-emerald-500/20 px-2 py-0.5 text-emerald-300"
-                  >🤝 İşbirlikçi</span>
-                  <span
-                    v-if="data.rank"
-                    class="rounded-full bg-gradient-to-r from-emerald-400 to-sky-400 px-2 py-0.5 font-semibold text-slate-950"
-                  >{{ data.rank.title }}</span>
-                </div>
+        <div v-else-if="data" class="space-y-3.5">
+          <!-- MÜŞTERİ KARTI: rütbe/rozet + puan + ilerleme + bugün -->
+          <div class="rounded-2xl border border-white/[0.06] bg-white/[0.035] px-4 py-3.5">
+            <div class="flex items-start justify-between gap-3">
+              <div class="flex flex-wrap gap-1.5 pt-0.5">
+                <span
+                  v-if="data.rank"
+                  class="rounded-full bg-[#773030]/50 px-2.5 py-1 text-[11px] font-semibold text-[#E6B8B8]"
+                >{{ data.rank.title }}</span>
+                <span
+                  v-if="isStudent"
+                  class="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-[#C9BABA]"
+                >Öğrenci</span>
+                <span
+                  v-if="isPartner"
+                  class="rounded-full bg-white/[0.06] px-2.5 py-1 text-[11px] font-medium text-[#C9BABA]"
+                >İşbirlikçi</span>
               </div>
-              <div class="text-right">
-                <p class="text-[10px] uppercase tracking-wide text-slate-400">Puan</p>
-                <p class="text-2xl font-extrabold leading-none text-emerald-300">{{ data.customer.points }}</p>
+              <div class="flex-none text-right">
+                <p class="text-[30px] font-bold leading-none text-[#CE8181]">{{ data.customer.points }}</p>
+                <p class="mt-0.5 text-[10px] uppercase tracking-wider text-[#A89597]">puan</p>
               </div>
             </div>
 
-            <!-- İlerleme: ⭐⭐⭐☆☆ 3/5 -->
-            <div v-if="rewardCost" class="mt-3 flex items-center justify-between rounded-lg bg-slate-900 px-3 py-2">
-              <div class="flex items-center gap-1 text-base leading-none">
+            <!-- İlerleme: ⭐⭐⭐☆☆ 3/5 · bedava hak -->
+            <div v-if="rewardCost" class="mt-3 flex items-center justify-between rounded-xl bg-black/25 px-3 py-2">
+              <div class="flex items-center gap-1 text-[15px] leading-none">
                 <template v-if="rewardCost <= 10">
-                  <span v-for="i in rewardCost" :key="i">{{ i <= progressPoints ? '⭐' : '☆' }}</span>
+                  <span v-for="i in rewardCost" :key="i" :class="i <= progressPoints ? '' : 'opacity-30'">{{ i <= progressPoints ? '⭐' : '☆' }}</span>
                 </template>
-                <span class="ml-1 text-xs font-semibold text-slate-300">{{ progressPoints }}/{{ rewardCost }}</span>
+                <span class="ml-1.5 text-xs font-semibold text-[#C9BABA]">{{ progressPoints }} / {{ rewardCost }}</span>
               </div>
               <span
-                class="text-xs font-semibold"
-                :class="freeCoffees > 0 ? 'text-amber-300' : 'text-slate-400'"
+                class="flex items-center gap-1.5 text-xs font-semibold"
+                :class="freeCoffees > 0 ? 'text-[#E0B15E]' : 'text-[#A89597]'"
               >
                 ☕ {{ freeCoffees > 0 ? `${freeCoffees} bedava hak` : 'bedava hak yok' }}
               </span>
             </div>
 
-            <!-- Bugünkü işlem durumu (#12) -->
+            <!-- Bugünkü işlem durumu -->
             <div
               v-if="todayVisit"
-              class="mt-2 rounded-lg px-3 py-2 text-xs font-medium"
+              class="mt-2 rounded-xl px-3 py-2 text-xs font-medium"
               :class="todayVisit.grantCount > 0
-                ? 'border border-amber-500/40 bg-amber-500/10 text-amber-200'
-                : 'bg-slate-900 text-slate-400'"
+                ? 'border border-[#E0B15E]/35 bg-[#E0B15E]/10 text-[#E7C185]'
+                : 'text-[#8DB49B]'"
             >
               <template v-if="todayVisit.grantCount > 0">
-                ⚠️ Bu müşteriye bugün <b>{{ todayVisit.grantCount }} kez</b> puan verildi
+                ⚠ Bu müşteriye bugün <b>{{ todayVisit.grantCount }} kez</b> puan verildi
                 (+{{ todayVisit.pointsToday }} puan<span v-if="lastGrantTime">, son {{ lastGrantTime }}</span>)
               </template>
-              <template v-else>✓ Bugün işlem yapılmamış</template>
-            </div>
-
-            <!-- Aktif kampanyalar (#13) -->
-            <div v-if="campaigns.length" class="mt-2 flex flex-wrap gap-1.5">
-              <span
-                v-for="c in campaigns"
-                :key="c.id"
-                class="rounded-full px-2.5 py-1 text-[11px] font-medium"
-                :class="c.isApplicableNow
-                  ? 'border border-emerald-500/50 bg-emerald-500/10 text-emerald-200'
-                  : 'border border-slate-700 bg-slate-900 text-slate-400'"
-                :title="c.description || c.name"
-              >
-                🎉 {{ c.name }} · {{ c.summary }}<span v-if="!c.isApplicableNow"> (şu an değil)</span>
-              </span>
+              <template v-else>✓ Bugün henüz işlem yapılmamış</template>
             </div>
           </div>
 
+          <!-- KAMPANYA (Happy Hour vb.) — admin'den otomatik gelir, öne çıkar -->
+          <div v-if="campaignActions.length" class="space-y-2">
+            <p class="flex items-center gap-2 text-xs font-semibold text-[#C9BABA]">
+              Kampanya
+              <span class="rounded-full bg-[#E8894A]/15 px-2 py-0.5 text-[10px] font-semibold text-[#F2A868]">şimdi geçerli</span>
+            </p>
+            <button
+              v-for="a in campaignActions"
+              :key="`${a.type}-${a.campaignId}`"
+              type="button"
+              class="flex w-full items-center gap-3 rounded-2xl border border-[#E8894A]/55 bg-[#E8894A]/[0.12] px-3.5 py-3 text-left transition hover:bg-[#E8894A]/20 active:scale-[0.99]"
+              @click="emitAction(a, 1)"
+            >
+              <span class="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-[#E8894A]/20 text-[#F2A868]">
+                <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+              </span>
+              <span class="min-w-0 flex-1">
+                <span class="block text-sm font-bold text-[#F4C4A0]">{{ a.label }}</span>
+                <span v-if="a.description" class="block truncate text-[11px] text-[#C9A98F]">{{ a.description }}</span>
+              </span>
+              <svg viewBox="0 0 20 20" class="h-5 w-5 flex-none text-[#E8894A]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5l5 5-5 5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+            </button>
+          </div>
+
           <!-- PUAN VER: tek tık +1..+5 -->
-          <div v-if="grantAction" class="space-y-1.5">
-            <p class="text-xs font-medium text-slate-300">➕ Puan Ver <span class="text-slate-500">(tek tık)</span></p>
+          <div v-if="grantAction" class="space-y-2">
+            <p class="text-xs font-semibold text-[#C9BABA]">Puan ver <span class="font-normal text-[#7E6E6E]">· tek tık</span></p>
             <div class="grid grid-cols-5 gap-2">
               <button
                 v-for="n in 5"
                 :key="n"
                 type="button"
-                class="h-14 rounded-xl border border-emerald-500/40 bg-emerald-500/5 text-lg font-bold text-emerald-200 transition hover:border-emerald-400 hover:bg-emerald-500/15 active:scale-95"
+                class="h-14 rounded-2xl text-[19px] font-bold transition active:scale-95"
+                :class="n === 1
+                  ? 'border border-[#9A4B4B] bg-[#7C3434] text-[#F6E4E4] hover:bg-[#8A3B3B]'
+                  : 'border border-[#9A4B4B]/55 bg-[#7C3434]/30 text-[#E3AFAF] hover:bg-[#7C3434]/45'"
                 @click="grantQuick(n)"
               >
                 +{{ n }}
@@ -119,21 +134,21 @@
             </div>
           </div>
 
-          <!-- ÖDÜL KULLAN -->
-          <div v-if="redeemAction" class="space-y-1.5">
+          <!-- ÖDÜL KULLAN: bedava kahve -->
+          <div v-if="redeemAction" class="space-y-2">
             <div class="flex items-center justify-between">
-              <p class="text-xs font-medium text-slate-300">☕ Bedava Kahve</p>
+              <p class="text-xs font-semibold text-[#C9BABA]">Bedava kahve</p>
               <div v-if="freeCoffees > 1" class="flex items-center gap-1.5 text-xs">
                 <button
                   type="button"
-                  class="h-6 w-6 rounded border border-slate-700 text-slate-200 disabled:opacity-40"
+                  class="h-6 w-6 rounded-lg border border-white/12 text-[#E3D6D6] transition hover:bg-white/[0.06] disabled:opacity-40"
                   :disabled="redeemQty <= 1"
                   @click="redeemQty--"
                 >−</button>
-                <span class="w-6 text-center font-semibold text-slate-100">{{ redeemQty }}</span>
+                <span class="w-6 text-center font-semibold text-[#F3EAEA]">{{ redeemQty }}</span>
                 <button
                   type="button"
-                  class="h-6 w-6 rounded border border-slate-700 text-slate-200 disabled:opacity-40"
+                  class="h-6 w-6 rounded-lg border border-white/12 text-[#E3D6D6] transition hover:bg-white/[0.06] disabled:opacity-40"
                   :disabled="redeemQty >= maxRedeem"
                   @click="redeemQty++"
                 >+</button>
@@ -141,52 +156,52 @@
             </div>
             <button
               type="button"
-              class="h-14 w-full rounded-xl border border-amber-500/50 bg-amber-500/10 text-base font-bold text-amber-200 transition hover:border-amber-400 hover:bg-amber-500/20 active:scale-95"
+              class="flex h-14 w-full items-center justify-center gap-2 rounded-2xl border border-[#E0B15E]/50 bg-[#E0B15E]/[0.12] text-[15px] font-bold text-[#EAC079] transition hover:bg-[#E0B15E]/20 active:scale-[0.99]"
               @click="redeem"
             >
-              ☕ {{ redeemQty }} Bedava Kahve Kullan
+              ☕ {{ redeemQty }} bedava kahve kullan
             </button>
           </div>
 
-          <!-- İNDİRİMLER -->
-          <div v-if="discountActions.length" class="space-y-1.5">
-            <p class="text-xs font-medium text-slate-300">💸 İndirim</p>
-            <button
-              v-for="a in discountActions"
-              :key="a.type"
-              type="button"
-              class="h-12 w-full rounded-xl border border-sky-500/40 bg-sky-500/5 text-sm font-semibold text-sky-200 transition hover:border-sky-400 hover:bg-sky-500/15 active:scale-95"
-              @click="emitAction(a, 1)"
-            >
-              {{ a.icon }} {{ a.label }}
-            </button>
-          </div>
-
-          <!-- KAMPANYA HEDİYELERİ (D1) — doğum günü vb. -->
-          <div v-if="giftActions.length" class="space-y-1.5">
-            <p class="text-xs font-medium text-slate-300">🎁 Kampanya</p>
+          <!-- DOĞUM GÜNÜ / KAMPANYA HEDİYELERİ -->
+          <div v-if="giftActions.length" class="space-y-2">
+            <p class="text-xs font-semibold text-[#C9BABA]">Hediye</p>
             <button
               v-for="a in giftActions"
               :key="a.type"
               type="button"
-              class="h-12 w-full rounded-xl border border-pink-500/40 bg-pink-500/5 text-sm font-semibold text-pink-200 transition hover:border-pink-400 hover:bg-pink-500/15 active:scale-95"
+              class="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-[#B8536E]/45 bg-[#B8536E]/[0.14] text-sm font-semibold text-[#E6A0B8] transition hover:bg-[#B8536E]/[0.22] active:scale-[0.99]"
               @click="emitAction(a, 1)"
             >
-              {{ a.icon }} {{ a.label }}
+              🎂 {{ a.label.replace(/^🎂\s*/, '') }}
+            </button>
+          </div>
+
+          <!-- İNDİRİMLER (öğrenci / işbirlikçi) -->
+          <div v-if="discountActions.length" class="space-y-2">
+            <p class="text-xs font-semibold text-[#C9BABA]">İndirim</p>
+            <button
+              v-for="a in discountActions"
+              :key="a.type"
+              type="button"
+              class="h-12 w-full rounded-2xl border border-white/10 bg-white/[0.03] text-sm font-semibold text-[#D3C4C4] transition hover:border-white/20 hover:bg-white/[0.06] active:scale-[0.99]"
+              @click="emitAction(a, 1)"
+            >
+              {{ a.label }}
             </button>
           </div>
 
           <!-- İPTAL -->
           <button
             type="button"
-            class="h-11 w-full rounded-xl border border-slate-700 text-sm font-medium text-slate-300 transition hover:border-slate-500 hover:text-slate-100"
+            class="h-11 w-full rounded-2xl border border-white/[0.12] text-sm font-medium text-[#A89597] transition hover:border-white/25 hover:text-[#F3EAEA]"
             @click="emit('close')"
           >
             İptal
           </button>
         </div>
 
-        <div v-else class="py-8 text-center text-xs text-slate-400">
+        <div v-else class="py-10 text-center text-xs text-[#A89597]">
           Müşteri bilgisi bulunamadı.
         </div>
       </section>
@@ -276,6 +291,11 @@ const emit = defineEmits<{
 const loading = computed(() => props.loading ?? false);
 const data = computed(() => props.data);
 
+const initial = computed(() => {
+  const n = data.value?.customer.name?.trim();
+  return n ? n.charAt(0).toUpperCase() : 'M';
+});
+
 const isStudent = computed(
   () => data.value?.customerType === 'STUDENT' || data.value?.customerType === 'STUDENT_PARTNER',
 );
@@ -290,8 +310,16 @@ const grantAction = computed(
 const redeemAction = computed(
   () => data.value?.availableActions.find((a) => a.type.endsWith('REDEEM_REWARD')) ?? null,
 );
+// Kampanya indirimleri (Happy Hour vb.) — kendi öne çıkan alanında gösterilir
+const campaignActions = computed(
+  () => data.value?.availableActions.filter((a) => a.type === 'CAMPAIGN_DISCOUNT') ?? [],
+);
+// Sıradan indirimler (öğrenci / işbirlikçi) — kampanya HARİÇ
 const discountActions = computed(
-  () => data.value?.availableActions.filter((a) => a.type.endsWith('_DISCOUNT')) ?? [],
+  () =>
+    data.value?.availableActions.filter(
+      (a) => a.type.endsWith('_DISCOUNT') && a.type !== 'CAMPAIGN_DISCOUNT',
+    ) ?? [],
 );
 // D1: kampanya hediyeleri (doğum günü vb. — grant/redeem/discount grubuna girmez)
 const giftActions = computed(
@@ -314,7 +342,6 @@ const lastGrantTime = computed(() => {
   if (!at) return null;
   return new Date(at).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
 });
-const campaigns = computed(() => data.value?.activeCampaigns ?? []);
 
 // Ödül adedi (birden fazla hak varsa)
 const redeemQty = ref(1);
